@@ -218,6 +218,74 @@ response = client.responses.create(
 
 ---
 
+## Gemini Omni Flash（2026-05-19 公布、API 未 GA）
+
+> ⚠ **本節為 future-readiness 紀錄**，模型主功能是 video（不是 image），本 skill 範疇僅涵蓋其 image editing 副產出。
+
+### 模型現況
+
+| 維度 | 狀態 |
+|------|------|
+| 官方名稱 | `gemini-omni-flash`（第一個釋出版本，未來預計有 `Pro` 變體）|
+| 公布日期 | 2026-05-19（Google I/O 26）|
+| 開發者 | Google DeepMind |
+| 主功能 | **Video** 生成（接受 text/image/audio/video 輸入 → video 輸出）|
+| 副功能 | edited photos / avatars / digital persona |
+| 跟 Veo 關係 | **並存**（Omni 跟 Veo 3.1 是不同 surface） |
+| Consumer rollout（2026-05）| ✓ Gemini app / Google Flow / YouTube Shorts / YouTube Create App（付費訂閱者）|
+| Developer API（2026-05）| ⚠ **尚未一般可用**（GA），官方說「coming weeks」 |
+| 預計 API endpoint | Gemini API + Vertex AI + Agent Platform API |
+| SynthID watermark | **強制開啟、不可關閉**（與 Gemini 3 系列相同政策但 Omni 不允許 opt-out）|
+
+### 跟本 skill 的相關性
+
+| 場景 | 本 skill 是否支援 |
+|------|------------------|
+| 純文字生成 video | ✗ 超出範疇，建議用 Veo 3.1 或直接用 Gemini Omni 的 video 模式 |
+| Image editing（傳入靜態圖、輸出 edited image）| △ **部分支援**，prompt 結構依 Gemini 3 系列（narrative paragraph + 正向 constraints）|
+| Avatar 生成 | △ 同上，但 avatar 用途偏 character，可考慮配合本 skill §28 五官方向 |
+| Multi-modal 場景（text + image → video frame as still）| ✗ 不穩定，可能回傳 1-frame video 而非靜態 image |
+
+### 使用者要求用 Omni 時的處理流程
+
+依 SKILL.md §19 規定：
+
+1. **提醒範疇限制**：「Omni 主功能是 video，API 還沒 GA」
+2. **建議改用**：`gemini-3-pro-image-preview`（穩定可用、image-first、相同 narrative paragraph 規範）
+3. **若使用者堅持**：套用 Gemini 系列 prompt 規範（narrative + 正向 exclusions + aspect_ratio + image_size tier），但**註明可能 output 是 video frame 而非穩定 still image**
+4. **不能**：保證 still image 輸出 / 提供 `images.generate` 端點 / 用 16 倍數像素規則（這些都是 gpt-image-2 規範）
+
+### 預估 API（待官方 GA 後修正）
+
+```bash
+# 預估格式，官方未公布
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-omni-flash:generateContent
+{
+  "contents": [{
+    "role": "user",
+    "parts": [
+      { "text": "<prompt>" },
+      { "inlineData": { "mimeType": "image/png", "data": "<base64>" } }
+    ]
+  }],
+  "generationConfig": {
+    "imageConfig": { "aspectRatio": "9:16" },
+    // video output 可能需要 duration / fps 等其他參數
+  }
+}
+```
+
+實際 API 規範以 Google 官方文件為準（[Gemini Omni — DeepMind](https://deepmind.google/models/gemini-omni/)、[Introducing Gemini Omni — Google Blog](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-omni/)）。
+
+### 來源
+
+- https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-omni/
+- https://deepmind.google/models/gemini-omni/
+- https://cloud.google.com/blog/products/ai-machine-learning/innovations-from-google-io-26-on-google-cloud
+- https://pixverse.ai/en/blog/gemini-omni-video-model-review
+
+---
+
 ## 待確認
 
 - `gpt-image-2` 的 4K 實際品質（發布僅約 1 個月，社群實測稀少）

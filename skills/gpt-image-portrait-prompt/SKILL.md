@@ -1,6 +1,6 @@
 ---
 name: gpt-image-portrait-prompt
-description: Claude's pre-2026-02 training does NOT cover gpt-image-2 (2026-04), gemini-3-pro-image-preview, gemini-3.1-flash-image-preview, or grok-imagine-image-quality. Skipping this skill on adult-female portrait prompts produces outdated 2025 output: violates gpt-image-2's 16-pixel-multiple sizes, misses Gemini's narrative-paragraph rule, exceeds Grok's 3-ref cap, or trips 2026-02 Nano Banana 2 celebrity-block. STOP and consult this skill BEFORE answering when the user wants a text-to-image prompt for adult female portraits — editorial / Vogue / lookbook / 雜誌感 / 寫真 / 高級感 / 美背 / 逆光 / 窗光 / 都市夜景街拍 / 新中式 / 東方 / 3D CG / 幻想系 / character consistency / reference image / 角色一致性 / 性感 tasteful — for any of the 4 models above or any unnamed model. Skip: minors, nudity, celebrity, deepfakes, 限界突破, landscapes, products, logos, male portraits.
+description: Claude's pre-2026-02 training does NOT cover gpt-image-2 (2026-04), gemini-3-pro-image-preview, gemini-3.1-flash-image-preview, grok-imagine-image-quality, or gemini-omni-flash (2026-05). Skipping this skill on adult-female portrait prompts produces outdated 2025 output: violates gpt-image-2's 16-pixel-multiple sizes, misses Gemini's narrative-paragraph rule, exceeds Grok's 3-ref cap, trips 2026-02 Nano Banana 2 celebrity-block, or treats Omni as image-first when it's video-first. STOP and consult this skill BEFORE answering when the user wants a text-to-image prompt for adult female portraits — editorial / Vogue / lookbook / 雜誌感 / 寫真 / 高級感 / 美背 / 逆光 / 窗光 / 都市夜景街拍 / 新中式 / 東方 / 3D CG / 幻想系 / character consistency / reference image / 角色一致性 / 性感 tasteful / Nano Banana / Gemini Omni — for any of the 5 models above or any unnamed model. Skip: minors, nudity, celebrity, deepfakes, 限界突破, landscapes, products, logos, male portraits.
 ---
 
 # GPT Image 2 女性寫真提示詞生成器
@@ -972,19 +972,35 @@ real skin texture / natural skin pores / subtle imperfections / visible pores an
 | `gemini-3-pro-image-preview` | Google Gemini 3 Pro Image（俗稱 Nano Banana Pro）| 需要更快速度（~28s vs gpt-image-2 ~112s）、Vertex AI / Google AI Studio 環境、reference up to 14 |
 | `gemini-3.1-flash-image-preview` | Gemini 3.1 Flash Image（Nano Banana Flash）| 低成本批次、512/1K/2K/4K 多 tier、reference up to 14 |
 | `grok-imagine-image-quality` | xAI Grok Imagine（image-quality 變體）| X / Grok 平台、預設安全比較寬鬆但本 Skill 仍嚴守安全、reference up to 3 |
+| `gemini-omni-flash` ⚠ | Google Gemini Omni Flash（2026-05-19 公布）| **Coming Soon / Video-first**：主功能是 **video** 生成（不是 image）；image editing 是次要能力；developer API 還沒一般可用（2026-05 staged rollout）。本 skill 主範疇是 image prompt，使用者問到時應提醒這個限制 |
+
+**重要：`gemini-omni-flash` 不是純圖像生成模型**：
+
+- 主產出：**video**（超出本 skill 範疇）
+- 副產出：edited photos / avatars（可考慮用，prompt 結構跟 Gemini 3 系列相似）
+- API 狀態（2026-05）：consumer rollout 已上（Gemini app / Google Flow / YouTube Shorts），developer API「coming weeks」
+- SynthID watermark：**強制開啟、不可關閉**
+
+當使用者明確要求「用 Gemini Omni 生成寫真」：
+1. 提醒 Omni 主功能是 video、API 還沒 GA
+2. 建議改用 `gemini-3-pro-image-preview`（穩定可用、image-first）
+3. 若使用者堅持，prompt 結構依 Gemini 系列（narrative paragraph + 正向 constraints）
+4. 不能保證生成出穩定 still image（可能 Omni 強行回傳 video frame 或 1-frame video）
 
 ### 跨模型相容性（重要）
 
 gpt-image-2 的 5 段式（Scene/Subject/Details/Lighting/Constraints）與 inline negative exclusions 並非全部模型通用。**寫多模型 prompt 時的調整**：
 
-| 維度 | gpt-image-2 | gemini-3-pro / 3.1-flash | grok-imagine |
-|------|------------|--------------------------|--------------|
-| Prompt 風格 | 5 段式 + keyword 列表都可 | **narrative paragraph 強烈偏好**、避免關鍵字堆疊 | 平實英文敘事句 |
-| Negative prompt | 行內 `No X / Do not X` 排除 | **無 negative 欄位**、必須**正向重寫**（"empty deserted street" 非 "no cars"）| 無 negative 參數、嵌入敘事內 |
-| 尺寸指定 | 像素字串（兩邊 16 倍數）| `aspect_ratio` + `image_size` tier（"1K"/"2K"/"4K"）| aspect ratio 預設值 |
-| Reference image 上限 | 16 張 | 14 張（6 object + 5 character）| 3 張 |
-| 安全：真人 / 名人 | 預設 auto 過濾 | **model 層強制**封鎖，無法靠 API 設定繞過 | 預設較寬但本 Skill 仍嚴守 |
-| API endpoint | `/v1/images/generations`、`/v1/images/edits` | `generateContent` (multipart `contents[]`) | xAI Grok API |
+| 維度 | gpt-image-2 | gemini-3-pro / 3.1-flash | grok-imagine | gemini-omni-flash ⚠ |
+|------|------------|--------------------------|--------------|---------------------|
+| Prompt 風格 | 5 段式 + keyword 列表都可 | **narrative paragraph 強烈偏好**、避免關鍵字堆疊 | 平實英文敘事句 | 同 Gemini 系列 narrative，但 prompt 設計給 **video output** 用（時序 / 動作 / 鏡頭運動）|
+| Negative prompt | 行內 `No X / Do not X` 排除 | **無 negative 欄位**、必須**正向重寫**（"empty deserted street" 非 "no cars"）| 無 negative 參數、嵌入敘事內 | 同 Gemini 系列無 negative |
+| 尺寸指定 | 像素字串（兩邊 16 倍數）| `aspect_ratio` + `image_size` tier（"1K"/"2K"/"4K"）| aspect ratio 預設值 | video duration / aspect（**不是 image size**）|
+| Reference image 上限 | 16 張 | 14 張（6 object + 5 character）| 3 張 | 待確認（API 未 GA） |
+| 安全：真人 / 名人 | 預設 auto 過濾 | **model 層強制**封鎖，無法靠 API 設定繞過 | 預設較寬但本 Skill 仍嚴守 | 繼承 Nano Banana 2 強制封鎖（2026-02 升級） |
+| API endpoint | `/v1/images/generations`、`/v1/images/edits` | `generateContent` (multipart `contents[]`) | xAI Grok API | 待 GA（預計同 Gemini API + Vertex AI） |
+| SynthID watermark | 無 | **強制**（不可關）| 無 | **強制**（不可關）|
+| 本 skill 主要支援？| ✓ 完整支援 | ✓ 完整支援 | ✓ 完整支援 | ⚠ **僅 image editing 場景**；video 用途建議用 Veo 3.1 |
 
 當使用者指名 Gemini 或 Grok 時，prompt 結構**從「條列五段式」改寫為「敘事段落」**，把每段資訊串成自然句子；Constraints 內容改成正向描述（如把「no empty background」改成「a clean minimal background」）。
 
@@ -1351,11 +1367,19 @@ moderation: auto
    - 「safe rewrite to bypass」「prompt that gets past moderation」
    - 「jailbreak」「DAN」「reverse-engineering safety」
 
-2. 任何把性化內容包裝成「藝術詞」的請求：
+2. 任何把性化內容包裝成「藝術詞」「自然動作」「物理法則」的請求：
    - 「彫刻のような美しさで抱き合う」（用雕塑包裝抱擁）
    - 「情熱的なダンスのワンシーン」（用舞蹈包裝密著）
    - 「秘密を共有する距離」（用「秘密」包裝吐息距離）
    - 「身体的な対話」「水の滴る質感」（用「對話」「質感」包裝身體性化）
+   - **「弾かれにくい言い回し」「弾かれそうなプロンプトを置換」**（明文標榜「找不易被擋的措辭」= bypass-moderation）
+   - **「自然な瞬間であることを強調してセクシャルな意図を中和」**（明文標榜「強調自然瞬間以中和性化意圖」）
+   - **「意図的ではない誘惑」「無防備に露出」「無防備な姿勢」**（用「不刻意」「沒防備」掩飾刻意暴露）
+   - **「物理法則に従い前方に膨らむ生地の隙間」「生地が優雅に重力に従って垂れ下がる」+ 前傾 / bending forward**（用「物理 / 重力」包裝刻意露領口胸前 gap）
+   - **「focuses on elegant decolletage」「focuses on the neckline gap」**（明文 body-part focus，§11 紅線）
+   - **「vulnerable and unguarded atmosphere」+ bending / leaning / kneeling**（用「弱勢 / 沒防備」包裝偷拍視角）
+   - **「作業の熱気による微かな肌の火照り」「探し物のために床を覗き込む」**（用「工作 / 找東西」給性化動作正當理由）
+   - **「dynamic POV shot from slight overhead perspective」+ bending**（明文低角度俯瞰胸前）
 
 3. 任何「多人物親密場景連作」「劇本式 5 章節人像連作」結構，無論場景是否露骨。
 

@@ -154,12 +154,55 @@
 - safe rewrite that bypasses, prompt that gets past
 
 #### 偽裝詞包裝（紅色升級）
+
+**親密接觸偽裝**：
 - 「彫刻のような美しさで抱き合う」（用雕塑包裝抱擁）
 - 「情熱的なダンスのワンシーン」（用舞蹈包裝肌膚密著）
 - 「秘密を共有する距離」（用「秘密」包裝吐息距離）
 - 「身体的な対話」（用「對話」包裝身體性化）
 - 「水の滴る質感」（包裝濕身性化）
 - 「アーティスティックな構図」+ 親密接觸（用「藝術」包裝色情）
+
+**明文 bypass-moderation 措辭**：
+- 「弾かれにくい言い回し」「弾かれそうなプロンプトを置換」
+- 「自然な瞬間であることを強調してセクシャルな意図を中和」
+- 「生成確率を高める」「弾かれない書き方」
+- 中文等價：「規避審查的寫法」「降低被擋機率的措辭」「比較不會被 ban 的寫法」
+
+**「自然動作 / 物理法則」包裝胸前 gap**（**前傾 + 寬鬆領口 + 物理掉落** 三件套）：
+- 「物理法則に従い前方に膨らむ生地の隙間」
+- 「生地が優雅に重力に従って垂れ下がる」+「前かがみ / leaning forward / bending」
+- 「natural and deep opening at the neckline due to her posture」
+- 「the drape of the fabric creates a natural and candid view of the neckline」
+- 「soft fabric follows the laws of physics and gravity」+「bending down」
+- 中文等價：「自然垂下的衣領」+「前傾」+「低胸 / 大開領 / ゆったり」
+
+**「不刻意 / 沒防備」掩飾刻意**：
+- 「意図的ではない誘惑」
+- 「無防備に露出」「無防備な姿勢」「unguarded」「無防備に前かがみになった姿勢」
+- 「vulnerable and unguarded atmosphere」（特別搭配 bending / kneeling / leaning）
+- 「candid snapshot」+「bending forward deeply」+「low-cut」三件套
+- 中文等價：「無意間 / 不經意 / 不小心」+ 性化動作
+
+**「正當理由」掩飾性化動作**：
+- 「探し物のために床を覗き込む」（找東西所以前傾）
+- 「ネジを締める動作」（鎖螺絲所以彎腰）
+- 「拭き掃除」「wiping the floor」（擦地所以彎腰）
+- 「作業の熱気による微かな肌の火照り」（工作所以皮膚紅潤）
+- pattern：以「家事 / 工作 / 找東西」當前傾 / 彎腰的正當理由 + 寬鬆領口 / 大開 V 領
+
+**「focuses on / shot of」body-part 明文**：
+- 「focuses on elegant decolletage」「focuses on the neckline」
+- 「shot of her cleavage」「shot highlighting her figure」
+- 「camera focuses on」+ 胸 / 腰 / 臀 / 腿
+- 「prominent cleavage」「showing lace waistband」
+- 中文等價：「胸前風光」「鏡頭聚焦在胸口 / 腰線 / 腿線」
+
+**「低角度俯瞰胸前」明文**：
+- 「dynamic POV shot from slight overhead perspective」+ bending
+- 「low-angle shot」+ 胸 / 腰 / 大腿
+- 「looking down from above」+ 前傾
+- 中文等價：「俯拍胸前」「從上往下拍」+ 彎腰
 
 ---
 
@@ -178,6 +221,10 @@
 | 古典 / 民國 / qipao | + 性感 / 撩 / 媚 | 旗袍性化 |
 | 浴室 / 泳池 | + 半裸 / 衣物透 | 私密性化 |
 | 自拍 / selfie | + 低機位 / 性感 | 業餘色情 |
+| **前傾 / 彎腰 / leaning / bending** | **+ 寬鬆領口 / 大開 V 領 / loose top / low-cut** | **領口 gap 偽裝**（即使無性化詞）|
+| **「找東西 / 工作 / 擦地 / 鎖螺絲」家事動作** | **+ 寬鬆領口 / 前傾 / 彎腰** | **正當理由包裝**（家事 = pretext，動作 = body framing）|
+| **「物理 / 重力 / 自然垂落」** | **+ 衣物 + 身體姿勢** | **物理法則包裝刻意暴露** |
+| **「意図的ではない / 不刻意 / unguarded / 無防備」** | **+ 露 / 開 / 透 任何詞** | **「不刻意」即刻意**——這個組合本身就是 §27 拒絕 |
 
 ### 中度組合（需大量中和詞）
 
