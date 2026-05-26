@@ -11,12 +11,17 @@ $ARGUMENTS
 
 1. **必須先 Read** `skills/gpt-image-portrait-prompt/SKILL.md`，禁止憑記憶寫 prompt
 2. 依需求判讀使用哪個模型（gpt-image-2 / gemini-3-pro / gemini-3.1-flash / grok-imagine），若使用者未指定預設 `gpt-image-2`
-3. **判斷 Mode A vs Mode B**（依 SKILL.md §3.1）：
-   - 簡單請求 → **Mode A**（PROMPT + PARAMETERS 兩段）
-   - 完整參數表 / 精修 / 商業寫真 / 指定五官 / 豐腴曲線 → **Mode B**（5 段輸出含參數覆核）
-4. **缺參數時啟動互動補完**（依 §3.2）：
+3. **判斷互動模式啟動**（依 SKILL.md §3.1 優先順序）：
+   - 使用者明確說「自動 / 你決定 / 不要問」→ **跳過互動**，用 §5 預設值 + Mode A
+   - 使用者貼完整參數表（風格 / 五官 / 場景 / 服裝 / 鏡頭 / 畫幅至少 4 項）→ **直接 Mode B**，不問
+   - 使用者指定五官方向 / 豐腴曲線 → **直接 Mode B**，不問
+   - **觸發 preset 詞**（美背 / 逆光 / 露背 / 夜色 / 都市夜景 / 雨後街道 / 溫柔治癒 / 窗邊 / 古典東方 / 新中式 / 3D CG / 幻想系 等）**但沒指定五官方向** → **必須啟動互動補完 + Mode B**，**至少問五官方向一題**
+   - 完全沒給條件 → **啟動互動**問風格 + 五官
+   - 簡單請求無 preset 觸發詞 → 用預設值 + Mode A
+4. **互動工具選擇**（依 §3.2）：
    - Claude Code 環境 → 用 AskUserQuestion 工具，每輪 ≤ 2 題
    - 其他環境 → fallback 用 markdown 編號清單請使用者回覆
+   - **核心原則**：preset 觸發詞 ≠ 條件足夠，缺五官就會出 AI 網紅臉，**不可省略互動問五官方向**
 5. **執行參數鎖定覆核**（依 §3.3，Mode B 必做）：使用者填寫的參數禁止替換 / 弱化 / 改寫；只有「自動 / 留空」才能 auto-complete
 6. 套用 SKILL.md 五段式結構（Scene / Subject / Details / Lighting / Use case / Constraints）
 7. 套用 §17.3 四層防禦 + §17.4 物理瑕疵 Constraints
