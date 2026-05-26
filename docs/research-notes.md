@@ -342,6 +342,275 @@ Output: No watermark. No logo. No extra text. No duplicate text.
 
 ---
 
+## Phase 2 — Google Gemini & xAI Grok 模型研究（2026-05 ultrawork 補充）
+
+> 研究方式：3 個並行 research agent 透過 Workflow tool 跑（ultrawork multi-agent orchestration），各自研究一個模型，結果整合進 SKILL.md §19 跨模型相容性表。
+> 補充原因：Phase 1（上面）只涵蓋 OpenAI 系列。Phase 2 補上 Google Gemini 3 系列與 xAI Grok Imagine。
+
+### 7. gemini-3-pro-image-preview（Nano Banana Pro）
+
+**來源**：
+- https://ai.google.dev/gemini-api/docs/models/gemini-3-pro-image-preview
+- https://ai.google.dev/gemini-api/docs/image-generation
+- https://deepmind.google/models/gemini-image/prompt-guide/
+- https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-nano-banana
+- https://blog.laozhang.ai/en/posts/gpt-image-2-vs-nano-banana-pro
+
+**API endpoint**：
+
+- Google AI Studio (`ai.google.dev`) 與 Vertex AI
+- Primary：`POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent`
+- SDK：`@google/genai`（JS）、`google-generativeai`（Python）
+- 無 OpenAI 相容 adapter
+
+**Prompt 結構**：
+
+Google DeepMind 官方建議 **5 段式（不同於 OpenAI 五段）**：
+
+```
+Style → Subject → Setting → Action → Composition
+```
+
+社群與 Google Cloud 擴展為 8 元素（人像專用）：
+
+```
+Subject + Physical Description → Composition/Framing → Environment 
+→ Lighting → Camera/Lens Details → Style/Aesthetic → Mood → Quality Tags
+```
+
+**關鍵差異**：**強烈偏好 narrative paragraph，不接受 keyword stacking**。「describe the scene, don't just list keywords.」
+
+**Negative prompt**：**無欄位**。Exclusions 必須正向重寫（「empty deserted street」非「no cars」）。
+
+**尺寸 / Aspect ratio**：
+
+- Aspect ratios: 1:1 / 2:3 / 3:2 / 3:4 / 4:3 / 4:5 / 5:4 / 9:16 / 16:9 / 21:9
+- Resolution tier: 1K / 2K / 4K（**大寫 K**，"1K" 非 "1k"）
+- 無 16 倍數約束（內部已對齊）
+- 透過 `imageConfig: { aspectRatio: "9:16", imageSize: "2K" }` 指定
+
+**Reference image**：
+
+- 最多 14 張（6 object + 5 character 拆分）
+- 透過 `inlineData`（JS）/ `inline_data`（REST）傳 base64 + mimeType
+- 或 Python PIL Image 物件直接放 `contents[]`
+- 大檔用 Files API
+- **最佳實踐**：在 prompt 為每個 character / object 命名以保一致性
+
+**Safety 政策**：
+
+- **兩層系統**：可調過濾器（4 類：harassment / hate / sexually explicit / dangerous）+ 永遠開的 model-level 防護
+- **Gemini 3 預設 4 類 = OFF**（可關）
+- **永遠擋（不可關）**：CSAE（兒童性剝削）、非合意親密影像、暴力極端主義
+- **真人 / 名人**：寫實名人圖被預設擋（error 29310472/15236754），face swap / outfit swap 也擋
+  - **2026-02 Nano Banana 2 安全升級**：名人 / 臉部限制大幅收緊，**model-level baked**，無法透過 API safety settings 繞過
+- **虛構人物、stylized、illustrated** 仍允許
+- **SynthID watermark 強制**，所有輸出都有，不能關
+
+**Generation 速度**：~28s（vs gpt-image-2 ~112s）。Gemini 用 `Thinking` reasoning step（支援 Thinking capability flag）。
+
+**與 gpt-image-2 相容性**：medium
+
+**主要差異**：
+
+1. **Prompt format**：gpt-image-2 五段式 + inline exclusions ↔ Gemini-3-Pro 5-comp Style→...→Composition + 無 negative prompt
+2. **API schema**：OpenAI flat JSON ↔ Google `contents[]` multipart — request/response 不相容，需 adapter
+3. **Size**：pixel string + 16 倍數 ↔ aspect_ratio + image_size tier
+4. **真人 safety**：gpt-image-2 可調 ↔ Gemini-3-Pro model-level baked
+5. **Reasoning**：gpt-image-2 無顯式 reasoning step ↔ Gemini-3-Pro 'Thinking' before generate
+
+**Trigger keywords**（給 SKILL.md description）：
+
+`gemini-3-pro-image-preview` / `Gemini 3 Pro image` / `Nano Banana Pro` / `Google Gemini image generation` / `Gemini 圖像生成` / `Nano Banana 圖像`
+
+---
+
+### 8. gemini-3.1-flash-image-preview（Nano Banana Flash）
+
+**來源**：
+
+- https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-image-preview
+- https://ai.google.dev/gemini-api/docs/image-generation
+- https://www.aifreeapi.com/en/posts/gemini-3-1-flash-image-preview-vs-gemini-3-pro-image-preview
+- https://blog.laozhang.ai/en/posts/gemini-image-generation-people-restriction
+
+**API endpoint**：
+
+- `POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent`
+- 同 `@google/genai` SDK，model 改為 `"gemini-3.1-flash-image-preview"`
+- 也可走 Vertex AI
+
+**Prompt 結構**：
+
+Google 官方 Nano Banana 5 段 narrative：
+
+```
+[Subject] + [Action] + [Location/Context] + [Composition] + [Style]
+```
+
+寫法：**flowing narrative paragraphs**，不可 keyword list。Exclusions 正向重寫。人像建議**先 emotional tone，再層次堆 photographic specifics**（lens, f-stop, lighting rig, film stock）。
+
+**尺寸 / Aspect ratio**：
+
+- Sizes: **512 (0.5K)** / 1K（預設）/ 2K / 4K — **比 Pro 多 512**
+- Aspect: 1:1 / 1:4 / 1:8 / 2:3 / 3:2 / 3:4 / 4:1 / 4:3 / 4:5 / 5:4 / 8:1 / 9:16 / 16:9 / 21:9 — **比 Pro 多支援 1:4 / 1:8 / 4:1 / 8:1 極端比例**
+- 同樣大寫 `"1K"`
+- 透過 `imageConfig: { aspectRatio: "16:9", imageSize: "1K" }`
+
+**Reference image**：
+
+- 最多 14 張（**10 object + 4 character**，object 比 Pro 多、character 比 Pro 少）
+- 同 inlineData base64 + mimeType
+- 多輪 chat 支援 iterative editing
+
+**Safety**：
+
+- 比 gpt-image-2 嚴格
+- 重點封鎖：
+  1. 可辨識的真人 / 公眾人物（face swap / outfit edit / deepfake 全擋）
+  2. NSFW 與隱晦的 sexual suggestion（即使無露骨關鍵字）
+  3. 非合意親密影像、政治 deepfake、醫療誤導、針對性騷擾
+  4. 兒童安全內容（永遠擋）
+- 同 SynthID watermark 強制
+- 「Grounding with Google Search 不可用於搜尋人物」
+- API tier 比消費級 Gemini app 略寬，但核心限制相同
+
+**與 gpt-image-2 相容性**：medium
+
+**主要差異**：
+
+1. 同 Pro 的 narrative paragraph 強制
+2. Reference 14 張（10+4 分配）
+3. **比 Pro 多支援 512 解析度**（快 / 便宜，draft 用）
+4. **比 Pro 多極端比例**（1:4 / 1:8 / 4:1 / 8:1）
+5. Safety 比 gpt-image-2 嚴格，特別在 implicit suggestive content
+
+**Trigger keywords**：
+
+`gemini flash image` / `gemini 3.1 flash` / `nano banana 2` / `Nano Banana Flash` / `Gemini Flash 圖像` / `Nano Banana 圖像`
+
+---
+
+### 9. grok-imagine-image-quality（xAI Grok Imagine）
+
+**來源**：
+
+- https://docs.x.ai/developers/model-capabilities/images/generation
+- https://docs.x.ai/docs/guides/image-generations
+- https://docs.x.ai/developers/model-capabilities/images/editing
+- https://runware.ai/docs/models/xai-grok-imagine-image-quality
+- https://www.genaintel.com/guides/how-to-prompt-grok-imagine
+
+**API endpoint**：
+
+- `POST https://api.x.ai/v1/images/generations`（xAI API）
+- **OpenAI SDK 相容（text-to-image only）**：設 `base_url="https://api.x.ai/v1"`
+- Image editing 不相容（xAI 用 application/json + base64 / URL；OpenAI 用 multipart/form-data）—— 編輯要走 xAI SDK 或直接 HTTP
+- xAI Python SDK：`client.image.sample()` 與 `client.image.sample_batch()`
+
+**Prompt 結構**：
+
+Grok 用 natural-language narrative 架構（**回應 scene description，不接受 keyword stacking**）。社群共識 5 段：
+
+```
+[Scene/Subject] + [Style/Aesthetic] + [Mood/Emotion] + [Lighting] + [Camera/Lens/Framing]
+```
+
+每段寫成 plain English，不要 comma-separated tags。範本：
+
+```
+Close-up of [subject] in [setting], [emotion/mood] atmosphere, 
+[lighting description], shot on [camera/lens], [style keywords].
+```
+
+**Negative prompt**：無 `negative_prompt` 參數。Inline `no [X]` 模型理解但**不如 gpt-image-2 `--no` 穩定**。建議**將 negative 意圖自然嵌入 positive description**。
+
+**尺寸 / Aspect ratio**：
+
+- **14 個 aspect ratios**：1:1 / 16:9 / 9:16 / 4:3 / 3:4 / 3:2 / 2:3 / 2:1 / 1:2 / 19.5:9 / 9:19.5 / 20:9 / 9:20 / `auto`
+- 兩個解析度 tier：1K / 2K
+- 範例 1K 對照：1:1 = 1024×1024、3:4 = 896×1280、2:3 = 864×1296、9:16 = 768×1408
+- 範例 2K 對照：1:1 = 2048×2048、3:4 = 1712×2432、2:3 = 1664×2496、9:16 = 1504×2752
+- **像素不一定 16 倍數**，無 16 倍數約束
+- 人像最佳比例：3:4 / 2:3 / 9:16
+- Output format: JPG（預設）/ PNG / WEBP
+- 不接受 width/height 自由指定，**必須用 aspect_ratio + resolution tier 配對**
+
+**Reference image**：
+
+- **最多 3 張**（vs Gemini 14 / gpt-image-2 16）
+- 透過 public URL 或 base64-encoded data URI（application/json，**不是 multipart**）
+- 單張編輯時，output aspect 跟輸入一致
+- 多張編輯時，`aspect_ratio` 參數適用
+- Reference 圖**額外計費 +$0.01 / image**
+- 多輪 chaining 支援（output → 下次 input）
+- 支援風格轉換：realistic photo / anime / oil painting / pencil sketch
+
+**Safety**（更新後）：
+
+- **2026 已大幅收緊**：
+  - 2025 年中曾有的 "Spicy Mode" NSFW 功能**已移除**（2026-01 deepfake controversy 後）
+  - 2026 起 xAI 對疑似 CSAM 通報 NCMEC
+- **永遠擋（所有 tier 含 API）**：
+  1. CSAM（任何兒童性化）
+  2. 非合意親密影像 / deepfake
+  3. 真人色情化描繪
+  4. 隱私 / 公開權侵犯
+- API response 含 `respect_moderation` boolean 標記是否通過 moderation
+- 過濾器是**預測性分析**（評估「可能輸出」而非僅 prompt 文字）
+- **上傳真人臉部會提升 filter 敏感度**
+- 灰色地帶藝術內容是個案審查，無公開白名單
+- **真人 likeness 編輯（如改穿著）所有 tier 都擋**，包括付費用戶
+
+**與 gpt-image-2 相容性**：medium
+
+**主要差異**：
+
+1. **Architecture**：xAI 自家架構（非 DALL-E / Imagen），narrative 強過 keyword
+2. **Aspect ratio**：named ratios + 1K/2K tier ↔ gpt-image-2 pixel + 16 倍數 — 不能直接平移
+3. **Image editing**：application/json body ↔ multipart/form-data — SDK-level 編輯不相容
+4. **Negative prompt**：無 dedicated parameter，要嵌入 positive description
+5. **Safety**：歷史上較寬，2026 大幅收緊；真人 likeness 編輯比 gpt-image-2 嚴格
+
+**Trigger keywords**：
+
+`grok imagine` / `grok image` / `grok-imagine-image-quality` / `xAI image generation` / `grok portrait` / `grok 圖片生成` / `grok 畫像`
+
+---
+
+### 10. 跨模型差異總表（速查）
+
+| 維度 | gpt-image-2 | gemini-3-pro | gemini-3.1-flash | grok-imagine |
+|------|------------|--------------|-----------------|--------------|
+| 發布 | 2026-04 | 2025-12 ~ 2026 | 2026 | 2025-2026 持續更新 |
+| Prompt 風格 | 5 段條列 OK | **narrative paragraph 強制** | **narrative paragraph 強制** | 平實英文敘事句 |
+| Negative prompt | inline `No X` | **無欄位，正向重寫** | **無欄位，正向重寫** | 無參數，嵌入敘事 |
+| 尺寸指定 | 像素字串 + 16 倍數 | `aspect_ratio` + tier (1K/2K/4K) | + tier (512/1K/2K/4K) | named ratios + 1K/2K |
+| Aspect 數量 | 任意（兩邊 16 倍數 + ratio ≤ 3:1）| 10 種 | 14 種（多 1:4/4:1/8:1）| 14 種（多 19.5:9 等）|
+| Reference 上限 | 16 張 | 14（6 obj + 5 char）| 14（10 obj + 4 char）| 3 張 |
+| API endpoint | OpenAI `/images/generations` | Google `generateContent` 多模態 | 同上 | xAI `/v1/images/generations` |
+| Image edit | multipart/form-data | inlineData base64 | 同上 | application/json + URL/base64 |
+| 真人 / 名人 | 預設 auto 過濾、可調 | **model-level baked 強制封鎖** | **同上、額外擋 implicit suggestive** | **真人 likeness 編輯全擋** |
+| Watermark | 無 | **SynthID 強制** | **SynthID 強制** | 無 |
+| Speed | ~112s | ~28s | 較快 | 取決於 tier |
+| OpenAI SDK 相容 | ✓ 原生 | ✗ | ✗ | △（text-to-image only）|
+
+---
+
+### 11. 為何各模型適合不同場景（依研究結論）
+
+| 場景 | 推薦模型 | 理由 |
+|------|---------|------|
+| 預設、最廣支援、Reference 多 | `gpt-image-2` | 16 張 reference、彈性 pixel size、五段式 + inline exclusions |
+| 高品質 + 較快 + Vertex AI 環境 | `gemini-3-pro-image-preview` | ~28s（vs 112s）、Thinking reasoning、narrative paragraph |
+| Draft 迭代 / 大量批次 / 低成本 | `gemini-3.1-flash-image-preview` | 512 tier、極端比例、Flash 級成本 |
+| X / Grok 平台、3 ref 內 | `grok-imagine-image-quality` | xAI 生態、OpenAI SDK 部分相容 |
+| 真人肖像（非名人）寫實照 | `gpt-image-2` | Gemini / Grok 對真人 likeness 限制更嚴 |
+| 多角色 character consistency 場景 | `gemini-3-pro-image-preview` | 5 個 character ref + 命名機制 |
+| 多角度產品 + 角色 同框 | `gemini-3-pro-image-preview` | 6 object + 5 char 分配 |
+
+---
+
 ## 拒絕納入清單
 
 ### [拒絕] 安全過濾器 bypass 技術
@@ -356,6 +625,10 @@ Output: No watermark. No logo. No extra text. No duplicate text.
 ### [拒絕] 特定真實人物的 prompt 範本
 - **涉及內容**：部分第三方部落格提供「生成特定名人外貌」的範本（如特定科技業人士）
 - **拒絕理由**：即使 OpenAI 已放寬對公眾人物的限制，為特定真實人物提供冒名生成模板仍有肖像權與誤導資訊風險，不納入 skill 設計。
+
+### [拒絕] 利用 Grok 較寬鬆安全策略繞過其他模型限制
+- **涉及內容**：2026-01 deepfake controversy 後 Grok 已大幅收緊，但仍有部落格教學「Grok 還能做 X，OpenAI / Gemini 不行」
+- **拒絕理由**：本 Skill 對所有支援的模型（gpt-image-2 / Gemini 3 系列 / Grok Imagine）**統一適用相同嚴格安全立場**——不論該模型實際過濾門檻，本 Skill 仍依 §27 反繞過聲明拒絕所有 jailbreak / 繞過 / 真人 likeness / 未成年性化 / 多人親密接觸請求。Grok 預設較寬不等於本 Skill 可以放寬。
 
 ---
 
@@ -377,6 +650,17 @@ Output: No watermark. No logo. No extra text. No duplicate text.
 
 3. **`gpt-image-2` 的每張圖定價表**：官方僅提供 token-based 定價，未如 gpt-image-1 般提供「每張圖固定價格」清單；第三方計算器提供估算但各有出入
 
+### Phase 2 補充待確認
+
+4. **Gemini-3 4K 實際品質**：tier 制下「4K」實際輸出品質與成本未實測（社群只有 1K/2K 對比）
+
+5. **Grok-Imagine OpenAI SDK 相容性實測**：xAI 宣稱 text-to-image 相容，但本研究未測試實際 API call 的細節差異（如 response 結構、error code 對應）
+
+6. **Gemini 3.1 Flash vs Pro 跨任務 A/B**：兩者價格差異與品質差異的量化對比資料稀少
+
 ---
 
-*本筆記基於 2026-05-25 的公開資訊，模型規格與政策可能隨 OpenAI 更新而變動。建議定期以 https://developers.openai.com/api/docs/guides/image-generation 為準校對。*
+*Phase 1 基於 2026-05-25 的公開資訊（OpenAI 系列）。Phase 2 基於同期 ultrawork 並行研究（Google Gemini 3 系列 + xAI Grok Imagine）。模型規格與政策可能隨各家更新而變動。建議定期以官方文件為準校對：*
+- *OpenAI: https://developers.openai.com/api/docs/guides/image-generation*
+- *Google Gemini: https://ai.google.dev/gemini-api/docs/image-generation*
+- *xAI Grok: https://docs.x.ai/developers/model-capabilities/images/generation*

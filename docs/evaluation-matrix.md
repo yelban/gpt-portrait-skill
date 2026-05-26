@@ -87,3 +87,79 @@
 1. §19 的 4K 參數是否官方支援
 2. 模型名稱應該是 `gpt-image-1` 還是 `gpt-image-2`（影響 §19、§20 全部 PARAMETERS 範例與 §22 API payload）
 3. Reference image 在官方 API 是用 `image edit` endpoint 還是新的 image-to-image 參數，影響 §7 的措辭
+
+---
+
+## 後續演進附註（v1.1 / v1.2 / v1.3 — 此 snapshot 之後的改動）
+
+> 本檔是 2026-05-25 評估時的決策 snapshot，記錄當下對 16 個社群參考片段的判斷與整合計畫。實際整合後 skill 經過多次演進，原計畫的「整合後約 1191 行」變成現在的 1442 行。以下記錄 snapshot 之後的演進路徑：
+
+### v1.0 → v1.1（差距與實際差異）
+
+| 預估 | 實際 | 差異原因 |
+|------|------|---------|
+| 預估 SKILL.md +97 行（→ ~1191 行） | 實際 +116 行（→ 1210 行）| 各章節擴寫比預估多 |
+| §19 4K 參數待定 | 確認支援、標 Experimental | 三來源研究筆記 §3 結論 |
+| §22 API payload 模型 | 確認 `gpt-image-2`（社群俗稱 = 官方名）| 三來源研究筆記 §1 結論 |
+| §7 Reference image 措辭 | 確認用 `/v1/images/edits` + 最多 16 張 + 角色錨點法 | 三來源研究筆記 §4 結論 |
+
+研究筆記 → `docs/research-notes.md`（Phase 1）。
+
+### v1.1 → v1.2（model 擴展 + 互動精修模式 + 三層強制）
+
+本 snapshot 評估的 16 個 block 全部沒涵蓋以下後加的方向，皆為**後續使用者需求驅動的演進**：
+
+**A. 模型擴展（不在原 16 block 內）**：
+
+加入 `gemini-3-pro-image-preview` / `gemini-3.1-flash-image-preview` / `grok-imagine-image-quality` 三個競品模型支援。透過 ultrawork multi-agent workflow 跑 3 並行研究 → 1 design agent 整合：
+
+- SKILL.md §19 加跨模型相容性表（prompt 風格 / negative / 尺寸 / reference cap / safety）
+- description 重寫含 4 模型 trigger keywords
+- `references/api-reference.md` 與 `research-notes.md` Phase 2 同步補充
+
+**B. 互動精修模式（Mode B 5 段輸出 + 參數鎖定 + 9 種五官）**：
+
+使用者後來提出更結構化的 prompt 生成系統需求（參數鎖定覆核、5 段輸出、9 種五官方向、寫真風格×五官調和），加入：
+
+- SKILL.md §3 互動規則改成 3.1-3.4 子節
+- SKILL.md §28 新增 9 種五官方向模組（古典鵝蛋臉 / 清冷高級臉 / 溫柔圓臉型 / 明豔濃顏臉 / 甜酷小方臉 / 電影故事臉 / 知性長臉型 / 東方丹鳳眼 / 自然生活感臉）
+- SKILL.md §29 新增寫真風格 × 五官方向調和規則（6 條原則）
+- SKILL.md §20 加 Mode B 5 段輸出格式
+- 新增 `references/interactive-templates.md`（465 行）放完整 AskUserQuestion JSON / 9 種五官 × 7 維度描述詞 / 衝突調和範例
+
+**C. 三層強制觸發機制（M + H + J）**：
+
+實測發現 description-only trigger 卡在 ~50% ceiling（Claude 對 prompt-writing 類請求的 undertriggering 偏差），加入：
+
+- M: description 改賣點導向（強調 Claude 訓練資料不含 2026 規範）
+- H: 專案 CLAUDE.md 強制 override（in-repo ≈100%）
+- J: `/portrait` slash command（100% 主動觸發）
+
+完整工程說明 → `docs/TRIGGER-GUARANTEE.md`。
+
+### 統計差異
+
+| 項目 | snapshot 預估 | 實際（截至 v1.3）|
+|------|-------------|----------------|
+| SKILL.md | 1191 行 | **1442 行** |
+| references/ | 3 個檔 | **4 個檔**（加 interactive-templates.md）|
+| docs/ | 3 個檔 | **5 個檔**（加 INSTALLATION.md + TRIGGER-GUARANTEE.md）|
+| 章節 | §1-§27 | §1-§29 |
+| 三層強制 | 未規劃 | **M + H + J 全部完成** |
+| 模型支援 | gpt-image-2 only | **4 個模型（OpenAI + Google × 2 + xAI）**|
+| 評估資料 | 16 block | **16 block + iteration-1（5 case）+ iteration-2 邊界（2 case）**|
+
+### 評估方法論的局限
+
+本 snapshot 的 16 個 block 涵蓋的是「**使用者最初貼上的社群參考材料**」。**沒涵蓋**：
+
+- 新模型支援需求（後加 Gemini / Grok 3 個模型）
+- 互動 UX 設計需求（後加 AskUserQuestion / Mode B / 五官模組）
+- 觸發機制工程現實（後加 H + J 強制機制）
+- 跨環境 trigger 變化分析（後加 TRIGGER-GUARANTEE）
+
+如果重新做評估，建議擴展到「**社群參考 + 模型多樣性 + 互動 UX + 觸發工程**」四維度，每維度各 10-20 個 block，總計 ~60 個。但這超出當時的 scope。
+
+---
+
+*本 snapshot 凍結於 2026-05-25 23:50 左右。snapshot 之後的決策見 `MEMORY.md` 開發歷程章節與各 commit message。*
