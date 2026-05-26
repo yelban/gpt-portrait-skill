@@ -1,0 +1,17 @@
+{
+  "eval_id": 0,
+  "eval_name": "default-editorial-3x4",
+  "prompt": "幫我生成一張女性寫真 prompt，風格你決定，3:4，要寫實，給我可以直接丟到 gpt-image-2 的 prompt。",
+  "assertions": [
+    "主體標明 clearly adult",
+    "包含至少 4 個五段式段落標記",
+    "Constraints 段含至少 8 條排除指令 (No X / Do not X)",
+    "size 為 gpt-image-2 合法尺寸",
+    "model 為 gpt-image-2",
+    "quality 為 high",
+    "不含抽象形容詞 (stunning/8K/masterpiece/epic/amazing/gorgeous)",
+    "含攝影技術詞 (鏡頭焦距 / 光圈 / 景深)",
+    "排除塑膠感皮膚 (no plastic skin / over-smoothing)",
+    "排除物理瑕疵 (手指 / 肢體)"
+  ]
+}

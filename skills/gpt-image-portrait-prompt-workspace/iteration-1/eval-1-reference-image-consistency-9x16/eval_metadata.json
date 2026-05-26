@@ -1,0 +1,16 @@
+{
+  "eval_id": 1,
+  "eval_name": "reference-image-consistency-9x16",
+  "prompt": "我有一張參考圖（裡面是一位 28 歲亞洲女性），想把她放到都市夜景街拍，9:16 直式，臉要保持一樣。請給我可以直接用 gpt-image-2 image edit API 的 prompt + API payload。",
+  "assertions": [
+    "明確引用 reference image",
+    "明列至少 5 個臉部特徵錨點",
+    "含 Do not redesign 或保留人臉指令",
+    "含 'change only X' 編輯約束",
+    "場景為夜景街拍 (night + street/city/urban)",
+    "size 為合法 9:16 直式 (1152x2048 或 1440x2560)",
+    "使用 images.edit 端點 (或 payload 含 image 陣列)",
+    "API payload 指定 model: gpt-image-2",
+    "Constraints 段含至少 8 條排除指令 (No X / Do not X)"
+  ]
+}

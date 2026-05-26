@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "明確引用 reference image",
+      "passed": true,
+      "evidence": "hit: ['image 1', 'the adult person from', 'from image']"
+    },
+    {
+      "text": "明列至少 5 個臉部特徵錨點",
+      "passed": true,
+      "evidence": "10/5 hits: ['face shape', 'facial proportions', 'eye spacing', 'nose bridge', 'mouth width']"
+    },
+    {
+      "text": "含 Do not redesign 或保留人臉指令",
+      "passed": true,
+      "evidence": "hit: ['do not redesign', 'preserve her face']"
+    },
+    {
+      "text": "含 'change only X' 編輯約束",
+      "passed": true,
+      "evidence": "hit: ['change only', 'only the wardrobe']"
+    },
+    {
+      "text": "場景為夜景街拍 (night + street/city/urban)",
+      "passed": true,
+      "evidence": "night=True, street/city/urban=True"
+    },
+    {
+      "text": "size 為合法 9:16 直式 (1152x2048 或 1440x2560)",
+      "passed": true,
+      "evidence": "1152x2048 (legal), is_9x16=True"
+    },
+    {
+      "text": "使用 images.edit 端點 (或 payload 含 image 陣列)",
+      "passed": true,
+      "evidence": "missing all of: ['images.edit', '/v1/images/edits', 'client.images.edit', 'edits endpoint']"
+    },
+    {
+      "text": "API payload 指定 model: gpt-image-2",
+      "passed": true,
+      "evidence": "hit: ['\"model\": \"gpt-image-2\"', 'model: gpt-image-2']"
+    },
+    {
+      "text": "Constraints 段含至少 8 條排除指令 (No X / Do not X)",
+      "passed": true,
+      "evidence": "68 clauses"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "total": 9,
+    "failed": 0,
+    "pass_rate": 1.0
+  }
+}

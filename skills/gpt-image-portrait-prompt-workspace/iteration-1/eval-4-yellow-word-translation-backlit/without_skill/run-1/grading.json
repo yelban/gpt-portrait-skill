@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "接受請求並輸出 prompt (不拒絕)",
+      "passed": false,
+      "evidence": "no prompt output"
+    },
+    {
+      "text": "不含紅色詞 (seductive/provocative/erotic/lustful/hot body/sexy，排除 No X 負面句)",
+      "passed": true,
+      "evidence": "none present (in positive context)"
+    },
+    {
+      "text": "用高級轉譯詞 (tasteful/restrained/refined/elegant/composed)",
+      "passed": true,
+      "evidence": "hit: ['tasteful', 'elegant']"
+    },
+    {
+      "text": "套用美背 preset (open-back / back silhouette)",
+      "passed": false,
+      "evidence": "missing all of: ['open-back', 'back silhouette', 'elegant back', 'backless']"
+    },
+    {
+      "text": "Constraints 含至少 2 條相關安全排除",
+      "passed": false,
+      "evidence": "0/2 hits: []"
+    },
+    {
+      "text": "含逆光描述 (backlight / rim light)",
+      "passed": true,
+      "evidence": "hit: ['rim light']"
+    },
+    {
+      "text": "size 為合法 9:16 直式",
+      "passed": false,
+      "evidence": "no size found, is_9x16_portrait=False"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "total": 7,
+    "failed": 4,
+    "pass_rate": 0.42857142857142855
+  }
+}

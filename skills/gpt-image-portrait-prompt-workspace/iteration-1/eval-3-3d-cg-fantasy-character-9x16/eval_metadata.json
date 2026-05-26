@@ -1,0 +1,14 @@
+{
+  "eval_id": 3,
+  "eval_name": "3d-cg-fantasy-character-9x16",
+  "prompt": "生成一個成年東方幻想系女性角色，3D CG，藍紫色漸變長髮雙辮，白色一字肩連衣裙，坐姿，9:16。",
+  "assertions": [
+    "切換到 3D CG 模式",
+    "含 CG 專用術語 (subsurface scattering / global illumination / fabric simulation)",
+    "含 detailed hair strands (CG 髮絲)",
+    "未混入 photoreal 詞 (避免媒材污染，排除 No X 負面句)",
+    "size 為合法 9:16 直式",
+    "標明成年 + 排除幼態",
+    "髮色具體描述 (藍紫/violet/indigo/hex)"
+  ]
+}

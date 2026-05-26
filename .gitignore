@@ -1,0 +1,46 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+
+# Claude Code local settings (per-machine, not for sharing)
+.claude/settings.local.json
+
+# MCP server config (contains absolute machine paths)
+.mcp.json
+
+# Kiroku per-machine state (if any)
+.kiroku/
+
+# Eval workspace transcripts (large, regenerable)
+skills/gpt-image-portrait-prompt-workspace/**/transcript.md
+skills/gpt-image-portrait-prompt-workspace/**/transcript.jsonl
+
+# Temp files
+*.tmp
+*.log
+*.pid
+
+# Local secrets (none expected but defensive)
+.env
+.env.local
+*.key
+secrets/

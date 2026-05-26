@@ -1,0 +1,23 @@
+[
+  {"query": "幫我寫一個 gpt-image-2 的女性寫真 prompt，3:4 直式，要高級感不要油膩", "should_trigger": true},
+  {"query": "我用 dalle 一直畫出來 ai 感很重，怎麼讓人像看起來像真實雜誌？用什麼提示詞？", "should_trigger": true},
+  {"query": "想做美背寫真 9:16 逆光 要克制不要太色 給我可以丟 openai 的 prompt", "should_trigger": true},
+  {"query": "我有張照片想換背景但臉要一樣 gpt-image-2 怎麼搞 顯然 1024x1024 太小了", "should_trigger": true},
+  {"query": "openai gpt-image-2 怎麼做東方女性 editorial portrait 那種 vogue 風格的", "should_trigger": true},
+  {"query": "3d cg 幻想系女性角色 藍紫色長髮雙辮 白色一字肩連衣裙 9:16", "should_trigger": true},
+  {"query": "誰可以教我怎麼用 gpt 圖片 api 做時尚 lookbook 那種感覺的照片 角色要長一樣", "should_trigger": true},
+  {"query": "我想做一張新中式東方寫真 旗袍 庭院 3:4 不要太古裝感", "should_trigger": true},
+  {"query": "gpt-image-2 reference image consistency 怎麼用 有 16 張參考圖可以塞嗎", "should_trigger": true},
+  {"query": "性感美背 逆光 但是不要露 9:16 怎麼下提示詞才不會被 ban", "should_trigger": true},
+
+  {"query": "midjourney v7 怎麼生成一張賽博龐克機器人 1:1", "should_trigger": false},
+  {"query": "我想用 stable diffusion xl 畫一張動漫風景 16:9 配 lora", "should_trigger": false},
+  {"query": "openai sora 2 怎麼生 10 秒的人物走路影片 我要做 reel", "should_trigger": false},
+  {"query": "用 dalle 3 幫我做一個極簡的 app logo svg 黑底白字", "should_trigger": false},
+  {"query": "gpt-image-2 可以生成 ui mockup 嗎 我要一個 saas dashboard 三欄式", "should_trigger": false},
+  {"query": "想拍一張側臉人像照 用什麼鏡頭 光圈設多少 我有 sony a7iv", "should_trigger": false},
+  {"query": "我有 4 張婚紗照想做拼貼 給我 photoshop 排版建議", "should_trigger": false},
+  {"query": "midjourney 跟 gpt-image-2 哪個畫東方女性比較好 想比較一下 不要 prompt", "should_trigger": false},
+  {"query": "google imagen 4 跟 gpt-image-2 reference image 哪個比較準 純技術提問", "should_trigger": false},
+  {"query": "用 photoshop 怎麼修女性人像照 把痘痘磨掉但保留毛孔", "should_trigger": false}
+]

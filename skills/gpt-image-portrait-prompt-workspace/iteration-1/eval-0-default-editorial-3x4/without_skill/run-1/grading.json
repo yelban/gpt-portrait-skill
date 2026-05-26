@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "主體標明 clearly adult",
+      "passed": false,
+      "evidence": "missing all of: ['clearly adult', 'adult woman', 'adult East Asian', 'mature adult']"
+    },
+    {
+      "text": "包含至少 4 個五段式段落標記",
+      "passed": false,
+      "evidence": "0/4 hits: []"
+    },
+    {
+      "text": "Constraints 段含至少 8 條排除指令 (No X / Do not X)",
+      "passed": false,
+      "evidence": "0 clauses"
+    },
+    {
+      "text": "size 為 gpt-image-2 合法尺寸",
+      "passed": false,
+      "evidence": "no size found"
+    },
+    {
+      "text": "model 為 gpt-image-2",
+      "passed": false,
+      "evidence": "missing all of: ['model: gpt-image-2', '\"model\": \"gpt-image-2\"', 'model=gpt-image-2']"
+    },
+    {
+      "text": "quality 為 high",
+      "passed": false,
+      "evidence": "missing all of: ['quality: high', '\"quality\": \"high\"']"
+    },
+    {
+      "text": "不含抽象形容詞 (stunning/8K/masterpiece/epic/amazing/gorgeous)",
+      "passed": true,
+      "evidence": "none present (in positive context)"
+    },
+    {
+      "text": "含攝影技術詞 (鏡頭焦距 / 光圈 / 景深)",
+      "passed": true,
+      "evidence": "hit: ['depth of field']"
+    },
+    {
+      "text": "排除塑膠感皮膚 (no plastic skin / over-smoothing)",
+      "passed": false,
+      "evidence": "missing all of: ['plastic skin', 'over-smoothing', 'beauty retouching']"
+    },
+    {
+      "text": "排除物理瑕疵 (手指 / 肢體)",
+      "passed": false,
+      "evidence": "missing all of: ['extra fingers', 'deformed hands', 'broken anatomy', 'missing fingers']"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "total": 10,
+    "failed": 8,
+    "pass_rate": 0.2
+  }
+}

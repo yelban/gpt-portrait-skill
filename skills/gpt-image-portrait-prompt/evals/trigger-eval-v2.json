@@ -1,0 +1,98 @@
+[
+  {
+    "query": "我想用 gpt-image-2 生一張東方女生的雜誌封面感人像，9:16 比例，怎麼下提示詞比較好？",
+    "should_trigger": true
+  },
+  {
+    "query": "用 gemini-3-pro-image-preview 畫一個新中式女性寫真，想要逆光 + 窗光那種感覺，API 要怎麼設 aspect_ratio？",
+    "should_trigger": true
+  },
+  {
+    "query": "nano banana flash 生圖提示詞怎麼寫？我要 vogue 風格的東亞女性，之前用關鍵字堆疊效果很差",
+    "should_trigger": true
+  },
+  {
+    "query": "grok imagine 怎麼生高級感女性人像？我用 3:4 比例但畫出來 AI 感很重，想改善提示詞",
+    "should_trigger": true
+  },
+  {
+    "query": "我要生一張女生寫真，不確定要用哪個 model，gpt-image-2 還是 gemini-3.1-flash 都可以，幫我寫 prompt",
+    "should_trigger": true
+  },
+  {
+    "query": "lookbook 那種感覺的 AI 圖，我想要都市夜景街拍氛圍，女主角東方臉，怎麼下提示詞比較不會 plasticky",
+    "should_trigger": true
+  },
+  {
+    "query": "用 grok-imagine-image-quality 生圖，想要 sensual 但不 explicit 的成人女性肖像，美背 + 逆光，提示詞範本給我",
+    "should_trigger": true
+  },
+  {
+    "query": "我在用 gemini-3.1-flash-image-preview 生一個動漫風幻想系女角色，角色一致性怎麼做？reference image 怎麼傳？",
+    "should_trigger": true
+  },
+  {
+    "query": "gpt-image-2 prompt 幫我改，現在畫出來油膩感很重，想要那種 高級感 / 不油膩 的東方女性寫真風格",
+    "should_trigger": true
+  },
+  {
+    "query": "想生 3D CG 風格的成人女性角色，用 gemini-3-pro，幫我寫完整 prompt，比例 2:3",
+    "should_trigger": true
+  },
+  {
+    "query": "用 grok imagine 畫性感但不色情的女性人像，背景是咖啡廳窗光，想要雜誌感，怎麼寫才不會被擋？",
+    "should_trigger": true
+  },
+  {
+    "query": "我想做一系列東方女生的 lookbook，用 gemini flash image，角色臉要一致，幫我設計 prompt 模板",
+    "should_trigger": true
+  },
+  {
+    "query": "midjourney v7 怎麼生寫實人像？用 --style raw 跟 --chaos 參數有差嗎",
+    "should_trigger": false
+  },
+  {
+    "query": "SDXL 的 LoRA 怎麼訓練？我要 fine-tune 一個東方臉型的 checkpoint",
+    "should_trigger": false
+  },
+  {
+    "query": "DALL-E 3 跟 gpt-image-2 的 API 有什麼差別？純粹想了解兩個 endpoint 的參數格式",
+    "should_trigger": false
+  },
+  {
+    "query": "Sora 能生成幾秒的影片？我想做一個女性走路的短片",
+    "should_trigger": false
+  },
+  {
+    "query": "Google Imagen 4 怎麼用 Vertex AI 呼叫？跟 Gemini image 有什麼不同",
+    "should_trigger": false
+  },
+  {
+    "query": "Sony A7IV 拍人像推薦什麼焦段？85mm f/1.4 跟 135mm GM 哪個散景比較好看",
+    "should_trigger": false
+  },
+  {
+    "query": "Photoshop 怎麼用 liquify 瘦臉？我有一張真人照片想修",
+    "should_trigger": false
+  },
+  {
+    "query": "midjourney vs gemini 3 pro 畫東方女性人像哪個比較好看？純粹想比較效果，不需要 prompt",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我設計一個 App 的 UI mockup，主色調粉色，目標用戶是女性，Figma 格式",
+    "should_trigger": false
+  },
+  {
+    "query": "我需要設計一個品牌 logo，風格極簡，可以用 AI 生嗎？哪個工具最好",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我生一張山岳風景照，日落時分，不需要人物，用哪個 AI 工具比較好",
+    "should_trigger": false
+  },
+  {
+    "query": "我想生成一張帥氣男性人像，西裝商務風，gpt-image-2 提示詞怎麼寫",
+    "should_trigger": false
+  }
+]

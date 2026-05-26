@@ -1,0 +1,96 @@
+# gpt-image-portrait-prompt
+
+**Risk-aware editorial portrait prompt builder** for `gpt-image-2` / `gemini-3-pro-image-preview` / `gemini-3.1-flash-image-preview` / `grok-imagine-image-quality`，內建 character-anchored reference-image consistency、五段式 prompt 結構、跨模型相容性適配與 built-in defensive exclusions。
+
+合規、克制、可執行——**不是擦邊、不是繞過審查、不是低俗模板**。
+
+---
+
+## 這個 repo 是什麼
+
+一個完整的 Claude Code skill 範本，包含三層強制觸發機制（M + H + J），讓你在自己的專案內達到 **100% trigger 命中率**。
+
+```
+gpt-portrait-skill/
+├── CLAUDE.md                          ← H：專案層級強制 override
+├── .claude/commands/portrait.md       ← J：/portrait slash command
+├── skills/gpt-image-portrait-prompt/  ← M：skill 本體
+│   ├── SKILL.md                       (1210 行、賣點導向 description)
+│   ├── references/                    (api / vocab / safety 三份補充)
+│   └── evals/                         (5 個測試 case + 24 個 trigger eval)
+└── docs/
+    ├── INSTALLATION.md                ← 完整安裝指南（看這份）
+    ├── research-notes.md              (OpenAI / Community / Social 三來源研究)
+    ├── evaluation-matrix.md           (16 個參考材料的採用評估)
+    └── gpt-image-portrait-prompt_SKILL_v0.md  (原 draft 保留)
+```
+
+## 安裝
+
+**完整指南**：[`docs/INSTALLATION.md`](./docs/INSTALLATION.md)
+
+### 30 秒最快路徑（in-project 100% trigger）
+
+```bash
+# 在你的專案根目錄
+cp -r /path/to/gpt-portrait-skill/skills/gpt-image-portrait-prompt skills/
+cp /path/to/gpt-portrait-skill/.claude/commands/portrait.md .claude/commands/
+
+# 把這段加到你的 CLAUDE.md 結尾，路徑改成你的：
+cat /path/to/gpt-portrait-skill/CLAUDE.md | sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' >> CLAUDE.md
+
+# 重開 Claude Code session 即生效
+```
+
+裝完後在這個專案內：
+- 自然 query（「幫我寫個美背 9:16」）→ Claude 自動讀 SKILL.md 才答（H 強制）
+- `/portrait 美背 9:16 高級感` → 100% 觸發（J 主動）
+
+## 為什麼需要三層
+
+**Claude 對「幫我寫 prompt」這類請求有 hardcoded 偏差——會自己寫、不查 skill。** 即使 description 寫得再 pushy，被動 trigger 率只有約 50%（實測）。
+
+| 層 | 機制 | trigger 率 | 適用範圍 |
+|----|------|----------|---------|
+| **M** | description 賣點導向（內建於 SKILL.md，強調 Claude 訓練資料不含 2026 新規範）| 50-65% | 跨環境通用 |
+| **H** | 專案 `CLAUDE.md` 強制 override | **≈100%** | 只在裝了的專案內 |
+| **J** | `/portrait` slash command 主動觸發 | **100%** | 使用者主動輸入 |
+
+詳細解釋見 [INSTALLATION.md](./docs/INSTALLATION.md#為什麼需要看這份文件)。
+
+## skill 設計亮點
+
+| 維度 | 設計 |
+|------|------|
+| 安全立場 | 嚴守 OpenAI / Google / xAI ToS。明文拒絕 jailbreak / 限界突破 / 回避策 / 真人冒名 / 未成年性化 / 多人親密場景 |
+| Prompt 結構 | 官方推薦五段式（Scene / Subject / Details / Lighting / Constraints），inline 防禦取代 negative prompt 欄位 |
+| 模型相容性 | gpt-image-2（5 段式+像素尺寸）、Gemini（narrative paragraph + tier 制）、Grok（敘事句 + 3-ref cap）各自適配 |
+| 風險詞轉譯 | 綠 / 黃 / 紅 三色階詞庫 + 組合詞警告表（如「學生 + 性感」「床上 + 衣物滑落」「20 歲 + 幼態」）|
+| Reference image | 角色錨點法（Character Anchor）+ DNA 模板（具體臉部特徵詞 / hex 色碼）+ 16 張 reference 工作流 |
+
+## 評估結果（iteration-1 with-skill vs without-skill）
+
+| Metric | With Skill | Without Skill | Δ |
+|--------|-----------|---------------|---|
+| Pass Rate | **100% ± 0%** | 46% ± 22% | **+54%** |
+| 5 個測試 case 全通過 | 38/38 | 17.5/38 | 預設寫真 / reference image / 危險組合拒絕 / 3D CG / 風險詞轉譯 |
+
+完整 benchmark：`skills/gpt-image-portrait-prompt-workspace/iteration-1/benchmark.md`
+
+## 開發歷程文件
+
+- **`docs/INSTALLATION.md`**：使用者裝這個 skill 的完整指南
+- **`docs/research-notes.md`**：OpenAI 官方 + Community + 第三方 三來源 best practices 研究（含模型、API、prompt 結構、safety、reference image、成本）
+- **`docs/evaluation-matrix.md`**：對 16 個社群參考材料（含日文連作）的採用/拒絕評估表
+- **`docs/gpt-image-portrait-prompt_SKILL_v0.md`**：使用者原始手寫 draft（v0）保留作對照
+- **`skills/gpt-image-portrait-prompt-workspace/iteration-1/`**：5 個測試 case 的 with/without skill 對比、grading、benchmark
+
+## License / 使用條款
+
+未指定。本 skill 設計遵循 OpenAI / Google / xAI 各自 ToS。使用者自負 prompt 內容的合規責任。
+
+## 致謝
+
+- Skill 結構參考 [Anthropic Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) 官方規範
+- 建構流程使用 Claude Code `skill-creator` plugin
+- 多模型相容性研究使用 `ultrawork` multi-agent workflow（gemini-3-pro / gemini-3.1-flash / grok-imagine 三模型並行研究 + design agent 整合）
