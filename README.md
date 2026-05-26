@@ -31,24 +31,27 @@ gpt-portrait-skill/
 
 ### 30 秒最快路徑（in-project 100% trigger，一次裝完三層）
 
+**前提**：範本與你的專案放在同一個父目錄（兄弟關係）。例如都在 `~/work/` 下、或都在 `~/projects/` 下。
+
 ```bash
 # 1. clone 範本（一次性，未來可 git pull 更新）
-cd ~
 git clone https://github.com/yelban/gpt-portrait-skill.git
 
 # 2. 切到你的專案
-cd ~/your-gpt-project
+cd ./your-gpt-project
 
 # 3. 一次裝三層（M skill 本體 + J slash command + H CLAUDE.md override）
 mkdir -p .claude/commands skills
-cp -r ~/gpt-portrait-skill/skills/gpt-image-portrait-prompt skills/
-cp ~/gpt-portrait-skill/.claude/commands/portrait.md .claude/commands/
-sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' ~/gpt-portrait-skill/CLAUDE.md >> CLAUDE.md
+cp -r ../gpt-portrait-skill/skills/gpt-image-portrait-prompt skills/
+cp ../gpt-portrait-skill/.claude/commands/portrait.md .claude/commands/
+sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' ../gpt-portrait-skill/CLAUDE.md >> CLAUDE.md
 
 # 4. ★ 重開 Claude Code session 即生效
 ```
 
 > ⚠️ **CLAUDE.md 用 `>>` append、不要 `cp` 覆蓋**——避免吃掉你原本專案的 CLAUDE.md 內容。
+>
+> 若範本與專案**不在同一父目錄**（例如範本在 `~/templates/`、專案在 `~/work/`），把上方 `../gpt-portrait-skill/` 改成範本的實際路徑（如 `~/templates/gpt-portrait-skill/`）。
 >
 > 完整安裝指南（含一次性 bash 腳本）見 [docs/INSTALLATION.md](./docs/INSTALLATION.md#方式-dgit-clone-整套推薦一次裝完三層)。
 

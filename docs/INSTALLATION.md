@@ -138,31 +138,39 @@ ls ~/.claude/skills/gpt-image-portrait-prompt/
 
 ### 方式 D：git clone 整套（推薦，一次裝完三層）
 
-最快路徑，**一次裝完 M + J + H 三層**（不像方式 A/B/C 還要手動補 H 跟 J）：
+最快路徑，**一次裝完 M + J + H 三層**（不像方式 A/B/C 還要手動補 H 跟 J）。
+
+**前提**：範本與你的專案放在同一個父目錄（兄弟關係）。例如：
+
+```text
+~/work/                          # 或任何工作目錄
+├── gpt-portrait-skill/          # ← 範本（git clone 來的）
+└── your-gpt-project/            # ← 你的專案
+```
 
 ```bash
-# 1. clone 範本到 home（一次性，未來可 pull 更新）
-cd ~
+# 1. 切到工作目錄、clone 範本（一次性，未來可 git pull 更新）
+cd ~/work          # 或你習慣放專案的目錄
 git clone https://github.com/yelban/gpt-portrait-skill.git
 
-# 2. 切到你的專案
-cd ~/your-gpt-project
+# 2. 切到你的專案（與範本同層）
+cd ./your-gpt-project
 
 # 3. 建立必要目錄
 mkdir -p .claude/commands skills
 
 # 4. ★ 複製 skill 本體（M 層，最關鍵）
-cp -r ~/gpt-portrait-skill/skills/gpt-image-portrait-prompt skills/
+cp -r ../gpt-portrait-skill/skills/gpt-image-portrait-prompt skills/
 
 # 5. 複製 J slash command
-cp ~/gpt-portrait-skill/.claude/commands/portrait.md .claude/commands/
+cp ../gpt-portrait-skill/.claude/commands/portrait.md .claude/commands/
 
 # 6. 附加 H 段落到你的 CLAUDE.md
 #    a. 如果你已經有 CLAUDE.md（保留你原本內容、只 append H 段落）：
-sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' ~/gpt-portrait-skill/CLAUDE.md >> CLAUDE.md
+sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' ../gpt-portrait-skill/CLAUDE.md >> CLAUDE.md
 
 #    b. 如果你還沒有 CLAUDE.md（直接整檔複製）：
-# cp ~/gpt-portrait-skill/CLAUDE.md CLAUDE.md
+# cp ../gpt-portrait-skill/CLAUDE.md CLAUDE.md
 
 # 7. 驗證三層完整性
 test -f skills/gpt-image-portrait-prompt/SKILL.md && echo "✓ M skill" || echo "✗ 缺 M"
@@ -181,10 +189,11 @@ grep -q "圖片寫真 prompt 必查 skill" CLAUDE.md && echo "✓ H override" ||
 
 **注意事項**：
 
-- 預設路徑用 `~/gpt-portrait-skill`（home directory）。若放別處，把 `~/gpt-portrait-skill` 改成實際路徑
-- 因為 SKILL.md 路徑用相對路徑（`skills/gpt-image-portrait-prompt/SKILL.md`），cp 進你的專案後**不需要修改任何路徑**——只要你的專案結構也是 `skills/` 在根目錄
-- 未來想更新 skill 規範：`cd ~/gpt-portrait-skill && git pull` 後重複步驟 4-5（再 cp 一次）
-- 不要把整個 `~/gpt-portrait-skill` 一股腦複製到你的專案——只 cp 三件事（skills/、portrait.md、CLAUDE.md H 段落）
+- 上方使用相對路徑 `../gpt-portrait-skill/`，**假設範本與專案在同一父目錄**（兄弟關係）
+- 若範本放別處（例如 `~/templates/gpt-portrait-skill/`），把 `../gpt-portrait-skill/` 改成範本的實際路徑（絕對路徑也可：`~/templates/gpt-portrait-skill/`）
+- 因為 SKILL.md 內部路徑用相對路徑（`skills/gpt-image-portrait-prompt/SKILL.md`），cp 進你的專案後**不需要修改任何 skill 內檔案路徑**——只要你的專案結構也是 `skills/` 在根目錄
+- 未來想更新 skill 規範：`cd ../gpt-portrait-skill && git pull` 後重複步驟 4-5（再 cp 一次）
+- 不要把整個 `../gpt-portrait-skill` 一股腦複製到你的專案——只 cp 三件事（skills/、portrait.md、CLAUDE.md H 段落）
 
 #### 一次性自動腳本（如果懶得記指令）
 
@@ -193,9 +202,11 @@ grep -q "圖片寫真 prompt 必查 skill" CLAUDE.md && echo "✓ H override" ||
 ```bash
 #!/bin/bash
 set -e
-REPO=${REPO:-$HOME/gpt-portrait-skill}
+# 預設範本路徑（兄弟目錄）；若範本放別處，執行前覆寫此變數：
+#   REPO=~/templates/gpt-portrait-skill ./install-gpt-portrait-skill.sh
+REPO=${REPO:-../gpt-portrait-skill}
 
-# 確認範本 repo 存在（沒有就 clone）
+# 確認範本 repo 存在（沒有就 clone 到 $REPO 位置）
 if [ ! -d "$REPO" ]; then
   git clone https://github.com/yelban/gpt-portrait-skill.git "$REPO"
 fi
