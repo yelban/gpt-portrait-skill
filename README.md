@@ -58,6 +58,13 @@ cat /path/to/gpt-portrait-skill/CLAUDE.md | sed -n '/^## 圖片寫真 prompt 必
 
 詳細解釋見 [INSTALLATION.md](./docs/INSTALLATION.md#為什麼需要看這份文件)。
 
+## 觸發率保證 — 「100%」的真相
+
+「100%」不是無條件，有 5 個前提（在這個 repo 內 / 新 session / 圖片相關請求 / 使用者沒拒絕 / Claude 遵守 CLAUDE.md）。離開這個 repo 就退回 50-65%。
+
+完整工程說明、決策流程圖、實測證據、為什麼不採用 plugin 形式：
+**👉 [docs/TRIGGER-GUARANTEE.md](./docs/TRIGGER-GUARANTEE.md)**
+
 ## skill 設計亮點
 
 | 維度 | 設計 |
@@ -80,10 +87,12 @@ cat /path/to/gpt-portrait-skill/CLAUDE.md | sed -n '/^## 圖片寫真 prompt 必
 ## 開發歷程文件
 
 - **`docs/INSTALLATION.md`**：使用者裝這個 skill 的完整指南
+- **`docs/TRIGGER-GUARANTEE.md`**：「100%」觸發率的工程現實（5 前提、決策流程圖、實測證據、為何不採 plugin 形式、跨環境變化表）
 - **`docs/research-notes.md`**：OpenAI 官方 + Community + 第三方 三來源 best practices 研究（含模型、API、prompt 結構、safety、reference image、成本）
 - **`docs/evaluation-matrix.md`**：對 16 個社群參考材料（含日文連作）的採用/拒絕評估表
 - **`docs/gpt-image-portrait-prompt_SKILL_v0.md`**：使用者原始手寫 draft（v0）保留作對照
 - **`skills/gpt-image-portrait-prompt-workspace/iteration-1/`**：5 個測試 case 的 with/without skill 對比、grading、benchmark
+- **`skills/gpt-image-portrait-prompt-workspace/iteration-2-edge/`**：邊界測試（完整參數 Mode B / 不可調和拒絕）
 
 ## License / 使用條款
 
