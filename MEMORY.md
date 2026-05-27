@@ -382,3 +382,32 @@ grep -q "圖片寫真 prompt 必查 skill" CLAUDE.md && echo "✓ 三層完整"
 - **吹吹喜歡簡潔回應 + 用 mermaid + 偏好繁中台灣用語 + commit message 寫英文**
 
 下次回來想增刪改 skill 時，從這份 MEMORY.md 開始看，再進 README → INSTALLATION → SKILL.md。
+
+---
+
+## 12. 2026-05-27 plugin 化重構（v1.0.0）
+
+把 in-project 「clone + cp」結構改成可用 `/plugin marketplace add yelban/gpt-portrait-skill` 一行裝。
+
+### 結構變更（git mv 保血緣）
+- 新增 `.claude-plugin/marketplace.json`（marketplace 入口、id = `gpt-portrait-skill`）
+- 新增 `plugin/.claude-plugin/plugin.json`（plugin metadata、name = `gpt-portrait`）
+- `.claude/commands/portrait.md` → `plugin/commands/portrait.md`
+- `skills/gpt-image-portrait-prompt/` → `plugin/skills/gpt-image-portrait-prompt/`（含 references + evals）
+- workspace 留根目錄不搬（dev iteration、不打包進 plugin）
+
+### 關鍵踩雷：`${CLAUDE_PLUGIN_ROOT}` 在 slash command markdown body **不展開**
+- 一開始把 portrait.md 的 Read 路徑改成 `${CLAUDE_PLUGIN_ROOT}/skills/gpt-image-portrait-prompt/SKILL.md`，自以為解決了 plugin 路徑問題
+- 查官方 [plugins-reference](https://code.claude.com/docs/en/plugins-reference) + [bug #9354](https://github.com/anthropics/claude-code/issues/9354) 才發現：該變數**只在 hooks / MCP / LSP / monitors 的 JSON 配置內展開**，markdown body 內視為字面字串（截至 2026-05 未修）
+- **正解**：portrait.md 與 CLAUDE.md 都改用「`Skill` 工具呼叫 `gpt-image-portrait-prompt` skill」——skill 載入由 Claude Code 自動發現機制處理（plugin 安裝後自動註冊；in-project 從 cwd `skills/` 自動掃描），完全不寫實體路徑
+- 這個策略 plugin / in-project / repo-dev 三情境通吃
+
+### install.sh 改動
+- cp 來源改 `plugin/skills/` 與 `plugin/commands/`
+- 不再需要 `sed` workaround（portrait.md 已不含 `${CLAUDE_PLUGIN_ROOT}` 變數）
+- 標頭加註「優先用 `/plugin install`，本腳本給舊版 Claude Code / Cursor / CI」
+
+### 教訓
+- **新功能（plugin / 變數展開）一定要查官方 docs + GitHub issue 確認支援範圍**——不要憑「ChatGPT 教過我這樣寫」的記憶寫設定
+- **「叫 skill 名字」比「Read 路徑」抽象層次更高、跨環境更穩**——只要 skill 被 Claude Code 註冊，無論是 cwd 掃描還是 plugin discovery 都會生效
+- karpathy plugin 範本（`andrej-karpathy-skills.TW`）只有 command 沒有 skill，所以參考它解 plugin 結構但要自行解決 skill 路徑問題

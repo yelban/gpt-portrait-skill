@@ -253,7 +253,37 @@
 
 ---
 
-## 9. 完整視覺語言檢查清單
+## 9. 高尚時尚安全轉譯與美學詞彙（從限制級與藝術流派中提煉）
+
+當使用者輸入的需求包含黃線/避審等美學風險時（如濕身、露骨親密接觸、露骨服裝滑落、前傾暴露領口等），本系統**不拒絕生圖**，而是會動態將其轉譯為以下**超高品質、合規、高尚且具備高品味時尚美學的英文攝影與材質語彙**。在維持使用者期望的「微濕感、精緻光影、雕塑美感、層次剪裁」的前提下，確保 100% 合規通關：
+
+### 微濕與水光質感（取代 wet bikini / wet body / 濕身）
+- `dewy textured resort wear` — 露微濕質感度假服（完美呈現濕潤反光的布料美學，避免肌膚過度暴露的審查判定）
+- `soft specularity and subtle specular highlights on skin` — 肌膚表面自然的溫潤高光與微光反射（用於展現健康水光感，不寫 wet body）
+- `rain-kissed fabric texture reflecting cool pavement glow` — 帶有微小雨滴質感的布料，反射街道冷色微光
+
+### 立體線條與光影雕琢（取代 direct body-part / cleavage focus）
+- `golden hour glow highlighting sculptural collarbones` — 夕陽黃金餘暉強調雕塑般立體優雅的鎖骨與肩頸線條（用藝術光影代替身體暴露描述）
+- `subtle three-quarter editorial angle capturing sculptural neck contour` — 平視或優雅的三分之四側身視角，捕捉優雅的頸部曲線與身體線條
+- `soft directional window light grazing the side profile` — 柔和的方向性窗光沿著側臉和肩線輕柔滑過
+
+### 布料垂墜與包裹構圖（取代 clothing slipping off / undressing / 衣物滑落）
+- `graceful fabric drapery participating in the composition, wrapping and layering softly` — 優美的布料垂墜參與構圖，在身體周圍呈現柔和的包裹、垂掛與層次感
+- `soft cotton-linen or silk fabric gently draped to outline a poised silhouette` — 柔軟棉麻或真絲服裝自然垂掛，描繪出端莊、高雅的身體外廓
+- `tailored body-skimming silhouette that highlights elegant natural posture` — 剪裁貼合（但不緊繃逼人）的版型，彰顯優雅、自然的從容姿態
+
+### 雕塑美感與舒展姿態（取代 crawling / passionate embrace / 抱擁 / 親密接觸）
+- `sculptural beauty of relaxed, poised posture` — 舒展姿勢的雕塑般優雅美感（用於多人親密包裝的單人高雅化轉譯）
+- `composed and balanced three-quarter portrait carrying narrative depth` — 帶有敘事深度、端莊且平衡的三分之四身人像姿態
+- `gentle over-the-shoulder glance with relaxed shoulder line` — 溫柔回眸搭配放鬆的肩頸線條，優雅自然
+
+### 居家與休息氛圍（取代 bedroom erotic / bed pose / 亂床）
+- `gentle dawn light outlining the texture of linen fabric in a quiet interior` — 安靜室內中，溫柔拂曉光線描繪亞麻布料與寢具細節（用於取代曖昧凌亂的床鋪暗示）
+- `bright minimal interior space wrapping the subject in calm, serene atmosphere` — 明亮極簡的室內空間，將主角包裹在平靜、祥和的生活感氛圍中
+
+---
+
+## 10. 完整視覺語言檢查清單
 
 寫 prompt 時，每個欄位至少有一個具體詞：
 

@@ -12,12 +12,15 @@
 
 ```
 gpt-portrait-skill/
-├── CLAUDE.md                          ← H：專案層級強制 override
-├── .claude/commands/portrait.md       ← J：/portrait slash command
-├── skills/gpt-image-portrait-prompt/  ← M：skill 本體
-│   ├── SKILL.md                       (1210 行、賣點導向 description)
-│   ├── references/                    (api / vocab / safety 三份補充)
-│   └── evals/                         (5 個測試 case + 24 個 trigger eval)
+├── .claude-plugin/marketplace.json    ← /plugin marketplace 入口
+├── plugin/
+│   ├── .claude-plugin/plugin.json     ← plugin metadata
+│   ├── commands/portrait.md           ← J：/portrait slash command
+│   └── skills/gpt-image-portrait-prompt/  ← M：skill 本體
+│       ├── SKILL.md                   (1210 行、賣點導向 description)
+│       ├── references/                (api / vocab / safety 三份補充)
+│       └── evals/                     (5 個測試 case + 24 個 trigger eval)
+├── CLAUDE.md                          ← H：clone 進來開發時的強制 override
 └── docs/
     ├── INSTALLATION.md                ← 完整安裝指南（看這份）
     ├── research-notes.md              (OpenAI / Community / Social 三來源研究)
@@ -29,9 +32,24 @@ gpt-portrait-skill/
 
 **完整指南**：[`docs/INSTALLATION.md`](./docs/INSTALLATION.md)
 
-### 30 秒最快路徑（in-project 100% trigger，一次裝完三層）
+### 方法 A：`/plugin` 一行裝（推薦，Claude Code v2.x+）
 
-**前提**：範本與你的專案放在同一個父目錄（兄弟關係）。例如都在 `~/work/` 下、或都在 `~/projects/` 下。
+在任何專案內開 Claude Code，輸入：
+
+```
+/plugin marketplace add yelban/gpt-portrait-skill
+/plugin install gpt-portrait@gpt-portrait-skill
+```
+
+裝完即得 **J + M 兩層**：
+- `/portrait 美背 9:16 高級感` slash command 全域可用（J，100% 觸發）
+- `gpt-image-portrait-prompt` skill 自動載入、被動觸發（M，50-65%）
+
+要再加 **H 層**（專案內 ≈100% trigger）：在你的專案根目錄執行下方方法 B 的 step 4 sed 一行。
+
+### 方法 B：clone + cp（in-project，舊版 Claude Code / Cursor 適用）
+
+**前提**：範本與你的專案放在同一個父目錄（兄弟關係）。
 
 ```bash
 # 1. clone 範本（一次性，未來可 git pull 更新）
@@ -42,8 +60,8 @@ cd ./your-gpt-project
 
 # 3. 一次裝三層（M skill 本體 + J slash command + H CLAUDE.md override）
 mkdir -p .claude/commands skills
-cp -r ../gpt-portrait-skill/skills/gpt-image-portrait-prompt skills/
-cp ../gpt-portrait-skill/.claude/commands/portrait.md .claude/commands/
+cp -r ../gpt-portrait-skill/plugin/skills/gpt-image-portrait-prompt skills/
+cp ../gpt-portrait-skill/plugin/commands/portrait.md .claude/commands/
 
 # 4. 安裝 H 層（CLAUDE.md 強制 override）——三種情境擇一
 # (a) 專案還沒有 CLAUDE.md（直接複製整份）
@@ -59,15 +77,17 @@ sed -n '/^# === gpt-portrait-skill 強制 override 區段開始 ===/,$p' ../gpt-
 # 5. ★ 重開 Claude Code session 即生效
 ```
 
-> ⚠️ **CLAUDE.md 用 `>>` append、不要 `cp` 覆蓋**——避免吃掉你原本專案的 CLAUDE.md 內容。
+> ⚠️ **方法 B 的 CLAUDE.md 用 `>>` append、不要 `cp` 覆蓋**——避免吃掉你原本專案的 CLAUDE.md 內容。
 >
 > 若範本與專案**不在同一父目錄**（例如範本在 `~/templates/`、專案在 `~/work/`），把上方 `../gpt-portrait-skill/` 改成範本的實際路徑（如 `~/templates/gpt-portrait-skill/`）。
 >
-> 完整安裝指南 + 推薦使用根目錄的 `install.sh` 見 [docs/INSTALLATION.md](./docs/INSTALLATION.md)。
+> 方法 B 也有根目錄的 `install.sh` 一鍵腳本：`REPO=../gpt-portrait-skill ./install.sh`。
+>
+> 完整安裝指南見 [docs/INSTALLATION.md](./docs/INSTALLATION.md)。
 
-裝完後在這個專案內：
-- 自然 query（「幫我寫個美背 9:16」）→ Claude 自動讀 SKILL.md 才答（H 強制）
-- `/portrait 美背 9:16 高級感` → 100% 觸發（J 主動）
+裝完後（方法 A 或 B）：
+- `/portrait 美背 9:16 高級感` → 100% 觸發（J 主動，全域可用）
+- 自然 query（「幫我寫個美背 9:16」）→ M 被動觸發 50-65%；裝 H 後在該專案內 ≈100%
 
 ## 為什麼需要三層
 

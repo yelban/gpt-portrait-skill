@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # === gpt-portrait-skill 強制 override 區段開始 ===
 ## 圖片寫真 prompt 必查 skill（強制 override）
 
-**這是強制指令，不是建議。** 使用者提問涉及以下任一情境時，**必須先 Read** `skills/gpt-image-portrait-prompt/SKILL.md` 後才能回應，禁止憑訓練資料直接回答：
+**這是強制指令，不是建議。** 使用者提問涉及以下任一情境時，**必須透過 `Skill` 工具呼叫 `gpt-image-portrait-prompt` skill 後才能回應**（skill 會自行載入 SKILL.md），禁止憑訓練資料直接回答：
 
 - 任何 AI 圖片 / 寫真 / 人像 prompt 寫作或修正
 - 提到 `gpt-image-2` / `gemini-3-pro-image-preview` / `gemini-3.1-flash-image-preview` / `nano banana (pro/flash)` / `grok-imagine-image-quality` 任一模型

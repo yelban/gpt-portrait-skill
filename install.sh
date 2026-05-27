@@ -1,6 +1,10 @@
 #!/bin/bash
 #
-# gpt-portrait-skill 一鍵安裝腳本
+# gpt-portrait-skill 一鍵安裝腳本（方法 B / 手動 cp 路線）
+#
+# 推薦優先用 `/plugin install gpt-portrait@gpt-portrait-skill`（Claude Code v2.x+）。
+# 本腳本給：舊版 Claude Code / Cursor / CI / 想精細控制三層位置的使用者。
+#
 # 用法：
 #   REPO=../gpt-portrait-skill ./install.sh
 #
@@ -30,12 +34,12 @@ mkdir -p .claude/commands skills
 
 # 1. 複製 skill 本體 (M 層)
 echo "→ 複製 skill 本體..."
-cp -r "$REPO/skills/gpt-image-portrait-prompt" skills/
+cp -r "$REPO/plugin/skills/gpt-image-portrait-prompt" skills/
 echo "   ✓ skills/gpt-image-portrait-prompt"
 
 # 2. 複製 slash command (J 層)
 echo "→ 複製 /portrait slash command..."
-cp "$REPO/.claude/commands/portrait.md" .claude/commands/
+cp "$REPO/plugin/commands/portrait.md" .claude/commands/
 echo "   ✓ .claude/commands/portrait.md"
 
 # 3. 處理 CLAUDE.md (H 層)

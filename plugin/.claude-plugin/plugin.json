@@ -1,0 +1,19 @@
+{
+  "name": "gpt-portrait",
+  "description": "AI 寫真 prompt 產生器：gpt-image-2 五段式、Gemini-3 narrative paragraph、Grok 3-ref cap，內含角色錨點、reference-image 一致性、五官方向 × 風格調和、組合詞風險表與 2026-04 後新模型規範。提供 /portrait slash command 與 gpt-image-portrait-prompt skill。",
+  "version": "1.0.0",
+  "author": {
+    "name": "yelban"
+  },
+  "homepage": "https://github.com/yelban/gpt-portrait-skill",
+  "license": "MIT",
+  "keywords": [
+    "image-prompt",
+    "gpt-image-2",
+    "gemini-3",
+    "grok-imagine",
+    "portrait",
+    "editorial",
+    "traditional-chinese"
+  ]
+}
