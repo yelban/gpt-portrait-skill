@@ -55,7 +55,7 @@ flowchart LR
 
 ### 前提 1：在這個 repo cwd 內 / 或對方已照 INSTALLATION.md 完整裝 3 層
 
-**意義**：CLAUDE.md 內的「圖片寫真 prompt 必查 skill」段落必須被 Claude Code 載入。
+**意義**：CLAUDE.md 內的「圖片寫真 prompt 必查 skill」段落必須被 Claude Code 載入（新版使用更穩健的錨點 `# === gpt-portrait-skill 強制 override 區段開始 ===`）。
 
 **載入條件**：
 - 使用者把 Claude Code 啟動在這個 repo 為 cwd
@@ -76,6 +76,8 @@ flowchart LR
 # 退出 Claude Code
 # 重新啟動，輸入：
 "請告訴我 CLAUDE.md 內有沒有『圖片寫真 prompt 必查 skill』段落？"
+# 或更穩健的檢查：
+# grep -q "gpt-portrait-skill 強制 override 區段開始" CLAUDE.md
 # Claude 應該能引用該段落
 ```
 

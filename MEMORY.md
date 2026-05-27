@@ -359,6 +359,8 @@ python3 "$SC/eval-viewer/generate_review.py" \
 test -f skills/gpt-image-portrait-prompt/SKILL.md && \
 test -f .claude/commands/portrait.md && \
 grep -q "圖片寫真 prompt 必查 skill" CLAUDE.md && echo "✓ 三層完整"
+# 更穩健的驗證方式（推薦）：
+# grep -q "gpt-portrait-skill 強制 override 區段開始" CLAUDE.md && echo "✓ H override"
 ```
 
 ---

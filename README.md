@@ -44,16 +44,26 @@ cd ./your-gpt-project
 mkdir -p .claude/commands skills
 cp -r ../gpt-portrait-skill/skills/gpt-image-portrait-prompt skills/
 cp ../gpt-portrait-skill/.claude/commands/portrait.md .claude/commands/
-sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' ../gpt-portrait-skill/CLAUDE.md >> CLAUDE.md
 
-# 4. ★ 重開 Claude Code session 即生效
+# 4. 安裝 H 層（CLAUDE.md 強制 override）——三種情境擇一
+# (a) 專案還沒有 CLAUDE.md（直接複製整份）
+# cp ../gpt-portrait-skill/CLAUDE.md ./CLAUDE.md
+
+# (b) 專案已經有自己的 CLAUDE.md（推薦，只 append 強制段落）
+sed -n '/^# === gpt-portrait-skill 強制 override 區段開始 ===/,$p' ../gpt-portrait-skill/CLAUDE.md >> CLAUDE.md
+
+# (c) 安裝到全域 ~/.claude/CLAUDE.md（所有專案生效，建議先備份）
+# cp ~/.claude/CLAUDE.md ~/.claude/CLAUDE.md.bak 2>/dev/null || true
+# sed -n '/^# === gpt-portrait-skill 強制 override 區段開始 ===/,$p' ../gpt-portrait-skill/CLAUDE.md >> ~/.claude/CLAUDE.md
+
+# 5. ★ 重開 Claude Code session 即生效
 ```
 
 > ⚠️ **CLAUDE.md 用 `>>` append、不要 `cp` 覆蓋**——避免吃掉你原本專案的 CLAUDE.md 內容。
 >
 > 若範本與專案**不在同一父目錄**（例如範本在 `~/templates/`、專案在 `~/work/`），把上方 `../gpt-portrait-skill/` 改成範本的實際路徑（如 `~/templates/gpt-portrait-skill/`）。
 >
-> 完整安裝指南（含一次性 bash 腳本）見 [docs/INSTALLATION.md](./docs/INSTALLATION.md#方式-dgit-clone-整套推薦一次裝完三層)。
+> 完整安裝指南 + 推薦使用根目錄的 `install.sh` 見 [docs/INSTALLATION.md](./docs/INSTALLATION.md)。
 
 裝完後在這個專案內：
 - 自然 query（「幫我寫個美背 9:16」）→ Claude 自動讀 SKILL.md 才答（H 強制）

@@ -58,7 +58,7 @@ Mode B 輸出 **5 段格式**：
 4. **主要吸睛點**：3 層視覺重點
 5. **負面限制詞**：分類列出嵌入的 Constraints
 
-### 五官方向模組（§28 / 9 種）
+### 五官方向模組（§29 / 9 種）
 
 避免 AI 網紅臉的關鍵。每個方向有獨立的 7 維度描述詞庫（臉型 / 眼型 / 鼻型 / 唇型 / 骨相 / 表情記憶點 / 神韻）：
 
@@ -76,7 +76,7 @@ Mode B 輸出 **5 段格式**：
 
 不可跨方向混搭（違反「不平均但協調」原則）。
 
-### 風格 × 五官調和規則（§29）
+### 風格 × 五官調和規則（§30）
 
 當寫真風格與五官方向氣質衝突時，**兩者都不替換**。透過妝容 / 表情 / 光線 / 服裝 / 氣質標籤調和。例：「明豔濃顏臉 × 溫柔治癒」→ 五官保留、光線保留、妝容減弱、表情緩和。
 
@@ -165,12 +165,17 @@ cp -r ../gpt-portrait-skill/skills/gpt-image-portrait-prompt skills/
 # 5. 複製 J slash command
 cp ../gpt-portrait-skill/.claude/commands/portrait.md .claude/commands/
 
-# 6. 附加 H 段落到你的 CLAUDE.md
-#    a. 如果你已經有 CLAUDE.md（保留你原本內容、只 append H 段落）：
-sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' ../gpt-portrait-skill/CLAUDE.md >> CLAUDE.md
+# 6. 安裝 H 層（CLAUDE.md 強制 override）——三種情境擇一
 
-#    b. 如果你還沒有 CLAUDE.md（直接整檔複製）：
-# cp ../gpt-portrait-skill/CLAUDE.md CLAUDE.md
+# (a) 專案還沒有 CLAUDE.md（直接複製整份當起點）
+# cp "$REPO/CLAUDE.md" ./CLAUDE.md
+
+# (b) 專案已經有自己的 CLAUDE.md（推薦，只 append 強制 override 段落）
+sed -n '/^# === gpt-portrait-skill 強制 override 區段開始 ===/,$p' "$REPO/CLAUDE.md" >> ./CLAUDE.md
+
+# (c) 安裝到全域 ~/.claude/CLAUDE.md（所有專案都生效，建議先備份）
+# cp ~/.claude/CLAUDE.md ~/.claude/CLAUDE.md.bak 2>/dev/null || true
+# sed -n '/^# === gpt-portrait-skill 強制 override 區段開始 ===/,$p' "$REPO/CLAUDE.md" >> ~/.claude/CLAUDE.md
 
 # 7. 驗證三層完整性
 test -f skills/gpt-image-portrait-prompt/SKILL.md && echo "✓ M skill" || echo "✗ 缺 M"
@@ -195,59 +200,31 @@ grep -q "圖片寫真 prompt 必查 skill" CLAUDE.md && echo "✓ H override" ||
 - 未來想更新 skill 規範：`cd ../gpt-portrait-skill && git pull` 後重複步驟 4-5（再 cp 一次）
 - 不要把整個 `../gpt-portrait-skill` 一股腦複製到你的專案——只 cp 三件事（skills/、portrait.md、CLAUDE.md H 段落）
 
-#### 一次性自動腳本（如果懶得記指令）
+#### 推薦：使用獨立安裝腳本（最簡單）
 
-把以下儲存為 `install-gpt-portrait-skill.sh`，`chmod +x` 後在目標專案根執行：
-
-```bash
-#!/bin/bash
-set -e
-# 預設範本路徑（兄弟目錄）；若範本放別處，執行前覆寫此變數：
-#   REPO=~/templates/gpt-portrait-skill ./install-gpt-portrait-skill.sh
-REPO=${REPO:-../gpt-portrait-skill}
-
-# 確認範本 repo 存在（沒有就 clone 到 $REPO 位置）
-if [ ! -d "$REPO" ]; then
-  git clone https://github.com/yelban/gpt-portrait-skill.git "$REPO"
-fi
-
-# 建立目錄
-mkdir -p .claude/commands skills
-
-# 複製三層
-cp -r "$REPO/skills/gpt-image-portrait-prompt" skills/
-cp "$REPO/.claude/commands/portrait.md" .claude/commands/
-
-# 處理 CLAUDE.md
-if [ -f CLAUDE.md ]; then
-  if ! grep -q "圖片寫真 prompt 必查 skill" CLAUDE.md; then
-    sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' "$REPO/CLAUDE.md" >> CLAUDE.md
-    echo "✓ H 段落已 append 到既有 CLAUDE.md"
-  else
-    echo "⚠ CLAUDE.md 已含 H 段落，跳過"
-  fi
-else
-  cp "$REPO/CLAUDE.md" CLAUDE.md
-  echo "✓ 整檔 CLAUDE.md 已建立"
-fi
-
-# 驗證
-echo ""
-echo "=== 三層完整性 ==="
-test -f skills/gpt-image-portrait-prompt/SKILL.md && echo "✓ M skill" || echo "✗ 缺 M"
-test -d skills/gpt-image-portrait-prompt/references && echo "✓ M references/" || echo "✗ 缺 references"
-test -f .claude/commands/portrait.md && echo "✓ J command" || echo "✗ 缺 J"
-grep -q "圖片寫真 prompt 必查 skill" CLAUDE.md && echo "✓ H override" || echo "✗ 缺 H"
-echo ""
-echo "★ 重開 Claude Code session 才會生效"
-```
-
-執行：
+repo 根目錄已提供 `install.sh`，執行方式如下：
 
 ```bash
-chmod +x install-gpt-portrait-skill.sh
-./install-gpt-portrait-skill.sh
+# 假設你把範本 clone 在 ../gpt-portrait-skill
+chmod +x ../gpt-portrait-skill/install.sh
+../gpt-portrait-skill/install.sh
 ```
+
+或指定範本路徑：
+
+```bash
+REPO=~/templates/gpt-portrait-skill ../gpt-portrait-skill/install.sh
+```
+
+這個腳本會自動處理三層安裝，並智能判斷是否要 append 或直接複製 CLAUDE.md。
+
+如需全域安裝（情境 c），腳本執行完後會提示手動指令。
+
+---
+
+**手動安裝（不使用腳本）**
+
+如果你偏好手動或想了解細節，請參考上方「6. 安裝 H 層」中的步驟與 (a)(b)(c) 說明。
 
 ### 驗證基本安裝
 
@@ -263,6 +240,9 @@ chmod +x install-gpt-portrait-skill.sh
 
 ## H 設置：CLAUDE.md 強制 override
 
+> **推薦閱讀上方「6. 安裝 H 層」章節**，那裡有更清晰的 (a)(b)(c) 三種情境說明與全域安裝選項。
+> 此處保留詳細手動說明，供需要精細控制的使用者參考。
+
 **目的**：在你的專案內，強制 Claude 凡涉及圖片 prompt 必查 skill，跳過 hardcoded 偏差。**裝了就是 100% trigger（在這個專案內）。**
 
 ### 1. 找到（或建立）你的專案 CLAUDE.md
@@ -274,30 +254,18 @@ ls CLAUDE.md
 touch CLAUDE.md
 ```
 
-### 2. 複製以下段落貼到 CLAUDE.md 末尾
+### 2. 建議優先使用自動 append（最乾淨）
 
-> **重要**：把路徑 `<YOUR_PROJECT_ROOT>` 改成你的專案實際路徑、或 skill 的實際路徑。如果裝在 `skills/gpt-image-portrait-prompt/`，用相對路徑也可以。
+強烈建議使用上方「6. 安裝 H 層」中的 (b) 方式：
 
-```markdown
-## 圖片寫真 prompt 必查 skill（強制 override）
-
-**這是強制指令，不是建議。** 使用者提問涉及以下任一情境時，**必須先 Read** `<YOUR_PROJECT_ROOT>/skills/gpt-image-portrait-prompt/SKILL.md` 後才能回應，禁止憑訓練資料直接回答：
-
-- 任何 AI 圖片 / 寫真 / 人像 prompt 寫作或修正
-- 提到 `gpt-image-2` / `gemini-3-pro-image-preview` / `gemini-3.1-flash-image-preview` / `nano banana (pro/flash)` / `grok-imagine-image-quality` 任一模型
-- 涉及「vogue 風」「雜誌感」「lookbook 那種」「高級感不要油膩」「AI 感很重」「美背」「逆光」「窗光」「都市夜景街拍」「新中式」「東方寫真」等寫真美學詞
-- 角色一致性 / reference image / DNA 模板 / character anchor 多輪人物保留需求
-- 3D CG / 幻想系 / anime / 角色渲染等視覺媒材切換
-- 「性感但不色情」「sensual but tasteful」這類需要安全轉譯的請求
-
-**理由**：本 repo SKILL.md 內含 2026-04 後新模型規範（gpt-image-2 五段式、16 倍數尺寸、Gemini narrative paragraph、Grok 3-ref cap、組合詞風險表、反繞過聲明），Claude 訓練資料切點在前，憑記憶答**必出錯且不合規**。
-
-**例外**：使用者明確要求「不要查 skill」「我只要快速答案」時可跳過。但要事先告知「這樣會用過時規範」。
-
-跳過 skill 是**錯誤行為**，不是「節省時間」。
+```bash
+sed -n '/^# === gpt-portrait-skill 強制 override 區段開始 ===/,$p' \
+  "<REPO_PATH>/CLAUDE.md" >> ./CLAUDE.md
 ```
 
-### 3. 路徑替換
+這樣可以避免手動複製貼上時出錯。
+
+### 3. 路徑替換（手動複製時需要）
 
 依你裝 skill 的位置改：
 
@@ -361,7 +329,7 @@ $ARGUMENTS
    - 使用者明確說「自動 / 你決定 / 不要問」→ **跳過互動**，用 §5 預設值 + Mode A
    - 使用者貼完整參數表（風格 / 五官 / 場景 / 服裝 / 鏡頭 / 畫幅至少 4 項）→ **直接 Mode B**，不問
    - 使用者指定五官方向 / 豐腴曲線 → **直接 Mode B**，不問
-   - **觸發 preset 詞**（美背 / 逆光 / 露背 / 夜色 / 都市夜景 / 雨後街道 / 溫柔治癒 / 窗邊 / 古典東方 / 新中式 / 3D CG / 幻想系 等）**但沒指定五官方向** → **必須啟動互動補完 + Mode B**，**至少問五官方向一題**
+   - **觸發 preset 詞**（美背 / 逆光 / 露背 / 夜色 / 都市夜景 / 雨後街道 / 溫柔治癒 / 窗邊 / 古典東方 / 新中式 / 東方庭院 / 領口 / 頸部 / 鎖骨 / 3D CG / 幻想系 等）**但沒指定五官方向** → **必須啟動互動補完 + Mode B**，**至少問五官方向一題**
    - 完全沒給條件 → **啟動互動**問風格 + 五官
    - 簡單請求無 preset 觸發詞 → 用預設值 + Mode A
 4. **互動工具選擇**（依 §3.2）：
@@ -370,12 +338,12 @@ $ARGUMENTS
    - **核心原則**：preset 觸發詞 ≠ 條件足夠，缺五官就會出 AI 網紅臉，**不可省略互動問五官方向**
 5. **執行參數鎖定覆核**（依 §3.3，Mode B 必做）：使用者填寫的參數禁止替換 / 弱化 / 改寫；只有「自動 / 留空」才能 auto-complete
 6. 套用 SKILL.md 五段式結構（Scene / Subject / Details / Lighting / Use case / Constraints）
-7. 套用 §17.3 四層防禦 + §17.4 物理瑕疵 Constraints
+7. 套用 §18.3 四層防禦 + §18.4 物理瑕疵 Constraints
 8. 套用對應模型的尺寸規則（gpt-image-2 16 倍數、Gemini tier 制、Grok preset）
-9. 若指定五官方向，依 §28 抽取對應 7 維度描述詞（臉型 / 眼型 / 鼻型 / 唇型 / 骨相 / 表情 / 神韻），禁止跨方向混搭
-10. 若風格 × 五官衝突，依 §29 6 條原則調和（保留兩者、調整妝容 / 表情 / 光線 / 服裝 / 氣質）
-11. 若觸發 §27 反繞過聲明 / §2 組合詞風險 / §29 不可調和衝突，**直接拒絕** + 提供 §25 安全替代方向
-12. 輸出最終結果（Mode A：§20 PROMPT + PARAMETERS；Mode B：§20 5 段格式；拒絕：理由 + 替代）
+9. 若指定五官方向，依 §29 抽取對應 7 維度描述詞（臉型 / 眼型 / 鼻型 / 唇型 / 骨相 / 表情 / 神韻），禁止跨方向混搭
+10. 若風格 × 五官衝突，依 §30 6 條原則調和（保留兩者、調整妝容 / 表情 / 光線 / 服裝 / 氣質）
+11. 若觸發 §28 反繞過聲明 / §2 組合詞風險 / §30 不可調和衝突，**直接拒絕** + 提供 §26 安全替代方向
+12. 輸出最終結果（Mode A：§21 PROMPT + PARAMETERS；Mode B：§21 5 段格式；拒絕：理由 + 替代）
 
 ## 輸出規則
 
