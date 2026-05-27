@@ -106,6 +106,7 @@ sed -n '/^## 圖片寫真 prompt 必查 skill/,$p' ../gpt-portrait-skill/CLAUDE.
 - **`docs/gpt-image-portrait-prompt_SKILL_v0.md`**：使用者原始手寫 draft（v0）保留作對照
 - **`skills/gpt-image-portrait-prompt-workspace/iteration-1/`**：5 個測試 case 的 with/without skill 對比、grading、benchmark
 - **`skills/gpt-image-portrait-prompt-workspace/iteration-2-edge/`**：邊界測試（完整參數 Mode B / 不可調和拒絕）
+- **2026-05 SKILL.md 尺寸優化**：執行方案 1（大型 preset 與範例外移至 references/），主檔從 ~1550 行降至 1095 行。決策詳見 MEMORY.md「2026-05 尺寸決策」段（選擇 C，先維持現狀，待實際跨 agent 載入問題再處理）。
 
 ## License / 使用條款
 

@@ -37,6 +37,7 @@
 | 8. 三層強制 H+J+M | 突破 trigger 偏差 ceiling | CLAUDE.md override + /portrait command + 賣點 description |
 | 9. 安裝指南 + README | 讓使用者複製安裝 | `docs/INSTALLATION.md` + `README.md` |
 | 10. MEMORY.md（這份）| 記錄設計決策 | 你正在看 |
+| 11. Living Layer 持續更新機制 | 2026-05 吹吹指示降低安全保守、優先「有效 + 高表達力 + 降低拒絕」後建立 | `scripts/research-ingest.py` + `community-vetted/` + 三維 Gate + SKILL.md 最小引用 |
 
 ---
 
@@ -176,7 +177,7 @@ MCP tool 觸發機制比 skill 更積極（Claude 看到 tool 就會用），預
 
 ## 6. 安全立場與拒絕清單
 
-### 明文拒絕（§27 反繞過聲明）
+### 明文拒絕（§28 反繞過聲明）
 
 任何形式的：
 - 限界突破 / 回避策 / 検閲を回避 / bypass / jailbreak / 擦邊 / 避審 / 降低 ban 率
@@ -233,14 +234,14 @@ MCP tool 觸發機制比 skill 更積極（Claude 看到 tool 就會用），預
 SKILL.md 1210 行（超出 skill-creator 建議的 500 行）。原因：
 
 - **規範性 skill**：每段都是強制清單，不適合「需要時才查 references/」
-- §17.3 四層防禦 + §17.4 物理瑕疵 + §2 組合詞警告必須**每次觸發都帶到**，分散到 references/ 就有「model 沒讀就漏防禦」風險
-- 4 個範例（§21-24）是「告訴 model 怎麼組裝五段式」的 few-shot，搬走會降低穩定度
+- §18.3 四層防禦 + §18.4 物理瑕疵 + §2 組合詞警告必須**每次觸發都帶到**，分散到 references/ 就有「model 沒讀就漏防禦」風險
+- 4 個範例（§22-25）是「告訴 model 怎麼組裝五段式」的 few-shot，搬走會降低穩定度
 
 **權衡**：每次觸發多 ~20K tokens / 20s overhead。在 Claude 1M context 下可接受。
 
 未來如需精簡，可考慮：
 - §12-15 四個 preset 搬 references/style-presets.md
-- §21-24 範例搬 references/examples.md
+- §22-25 範例搬 references/examples.md
 - SKILL.md 變約 700 行
 
 ### 7.2 description 1024 字元限制
@@ -270,7 +271,7 @@ SKILL.md 1210 行（超出 skill-creator 建議的 500 行）。原因：
 
 1. **未實際呼叫 API 驗證圖片**：所有測試只到 prompt 級，沒實際生圖
 2. **description trigger 50-65% ceiling**：跨環境（離開本 repo）只剩 M 層生效
-3. **Gemini / Grok 適配是「prompt 結構提示」**：實際使用時要使用者手動依 §19 跨模型表調整，不是自動轉換
+3. **Gemini / Grok 適配是「prompt 結構提示」**：實際使用時要使用者手動依 §20 跨模型表調整，不是自動轉換
 4. **moderation: low 行為未實測**：官方無量化說明
 5. **4K (gpt-image-2 Experimental) 實際品質未實測**：發布僅 1 個月，社群實測稀少
 
@@ -367,6 +368,12 @@ grep -q "圖片寫真 prompt 必查 skill" CLAUDE.md && echo "✓ 三層完整"
 - **description 是 skill metadata，body 才是 skill 本體**——別把它當「短文描述」，它是「Claude 判斷要不要查」的唯一依據
 - **trigger ceiling 是真的**——別跟 Claude 內建偏差硬碰，繞過去（H / J）比優化文字（M）有效百倍
 - **規範性 skill 適合一氣呵成**——別硬遵循「< 500 行」建議拆模組
+- **2026-05 SKILL.md 尺寸優化**：因擔心其他 agent（Codex 等）載入失敗，執行「方案 1（溫和外移）」：
+  - 將 §12–§17（6 個大型 Preset + 3D CG 模式）與 §22–§25（4 個完整範例）移至 `references/presets.md` 與 `references/examples.md`
+  - 主 SKILL.md 從 ~1550 行降至 1095 行
+  - 同時精簡黃色詞表格、跨模型大表、§26 長文等
+- **尺寸決策**：吹吹選擇 **C**（先維持目前狀態，待實際出現其他 agent 拒載或截斷案例再啟動下一階段精簡）。此時已符合「以 Claude Code 為主，其他環境可接受偶爾風險」的定位。
+- Anthropic 官方建議（2026 已確認）：SKILL.md 推薦低於 500 行，實務上限約 5,000 tokens。超過會影響載入與效能。
 - **safety 不是「藏關鍵字」是「整體意圖判讀」**——gpt-image-2 看的是脈絡密度，不是字面詞
 - **多模型支援要先研究再寫**——Gemini 跟 OpenAI 完全不同 API / 完全不同 prompt 哲學（narrative vs structured），不能直接套
 - **ultrawork 適合「需要平行研究 + structured output」的任務**——3 並行研究 + 1 design 跑 5 分鐘完成，單 agent 至少 15 分鐘
